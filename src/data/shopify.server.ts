@@ -80,24 +80,48 @@ function toProduct(node: ShopifyProduct): Product {
     colors = getUniqueColors(variants);
     sizes = getUniqueSizes(variants);
   } else {
-    const singleSize = variants.length > 1 ? "Tek Beden" : "Standart";
-    productVariants = variants.map((v) => ({
-      color: v.title,
-      size: singleSize,
-      sku: v.sku || "",
-      stock: v.quantityAvailable,
-      variantId: v.id,
-    }));
-    colors = [variants.map((v) => v.title).join(", ")];
-    sizes = [singleSize];
+    const isSizeOnly =
+      node.options.length === 1 &&
+      node.options.some((o) =>
+        OPTION_SIZE_NAMES.some((n) => o.name.toLowerCase().includes(n))
+      );
+
+    if (isSizeOnly) {
+      productVariants = variants.map((v) => ({
+        color: "Tek Renk",
+        size: getSizeValue(v),
+        sku: v.sku || "",
+        stock: v.quantityAvailable,
+        variantId: v.id,
+      }));
+      colors = ["Tek Renk"];
+      sizes = getUniqueSizes(variants);
+    } else {
+      const singleSize = variants.length > 1 ? "Tek Beden" : "Standart";
+      productVariants = variants.map((v) => ({
+        color: v.title,
+        size: singleSize,
+        sku: v.sku || "",
+        stock: v.quantityAvailable,
+        variantId: v.id,
+      }));
+      colors = Array.from(new Set(variants.map((v) => v.title)));
+      sizes = [singleSize];
+    }
   }
 
   const price = `${parseFloat(node.priceRange.minVariantPrice.amount).toFixed(2)} TL`;
-  const originalPrice = node.compareAtPriceRange?.minVariantPrice.amount
-    ? `${parseFloat(node.compareAtPriceRange.minVariantPrice.amount).toFixed(2)} TL`
+  const compareAtAmount = node.compareAtPriceRange?.minVariantPrice.amount;
+  const originalPrice = compareAtAmount && parseFloat(compareAtAmount) > 0
+    ? `${parseFloat(compareAtAmount).toFixed(2)} TL`
     : undefined;
 
   const totalStock = variants.reduce((sum, v) => sum + v.quantityAvailable, 0);
+
+  const collectionTitles = node.collections.edges.map((e) => e.node.title);
+  const categoryTags = (node.tags ?? []).filter(
+    (t: string) => !t.startsWith("cat_")
+  );
 
   return {
     id: productCounter,
@@ -112,7 +136,8 @@ function toProduct(node: ShopifyProduct): Product {
     colors,
     sizes,
     description: node.descriptionHtml || "",
-    categories: node.collections.edges.map((e) => e.node.title),
+    categories: collectionTitles.length > 0 ? collectionTitles : categoryTags,
+    tags: node.tags ?? [],
     sku: variants[0]?.sku || "",
     rating: 0,
     reviewCount: 0,
@@ -336,6 +361,12 @@ export interface CollectionCount {
   image: string | null;
 }
 
+function extractHandle(href: string): string {
+  const clean = href.split("?")[0].replace(/\/+$/, "");
+  const segments = clean.split("/");
+  return segments[segments.length - 1] || "";
+}
+
 export async function getCollectionsWithCounts(): Promise<CollectionCount[]> {
   const data = await shopifyFetch<any>(COLLECTIONS_WITH_COUNTS_QUERY, { first: 50 });
   return (data?.collections?.edges ?? []).map((e: any) => ({
@@ -343,6 +374,40 @@ export async function getCollectionsWithCounts(): Promise<CollectionCount[]> {
     name: e.node.title,
     productCount: e.node.products?.edges?.length ?? 0,
     image: e.node.image?.url ?? null,
+  }));
+}
+
+export async function getCategoryCountsFromTags(navItems: NavMenuItem[]): Promise<CollectionCount[]> {
+  const allProducts = await getAllProducts();
+  const counts = new Map<string, { name: string; count: number; image: string | null }>();
+
+  const initNav = (items: NavMenuItem[]) => {
+    for (const item of items) {
+      const handle = extractHandle(item.href);
+      if (handle) {
+        if (!counts.has(handle)) {
+          counts.set(handle, { name: item.name, count: 0, image: item.image });
+        }
+      }
+      initNav(item.children);
+    }
+  };
+  initNav(navItems);
+
+  for (const product of allProducts) {
+    for (const tag of product.tags) {
+      if (counts.has(tag)) {
+        const entry = counts.get(tag)!;
+        entry.count++;
+      }
+    }
+  }
+
+  return Array.from(counts.entries()).map(([handle, data]) => ({
+    handle,
+    name: data.name,
+    productCount: data.count,
+    image: data.image,
   }));
 }
 

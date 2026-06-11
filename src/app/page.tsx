@@ -1,13 +1,11 @@
 import { Header, BannerSlider, SeasonCollection, CertificateBar, BestSellers, Footer } from "@/components/storefront";
-import { getMainMenu, getCollectionsWithCounts, getHeroSlides } from "@/data/shopify.server";
+import { getMainMenu, getCategoryCountsFromTags, getHeroSlides } from "@/data/shopify.server";
 
 export const revalidate = 60;
 
 export default async function HomePage() {
-  const [navItems, collectionCounts] = await Promise.all([
-    getMainMenu(),
-    getCollectionsWithCounts(),
-  ]);
+  const navItems = await getMainMenu();
+  const collectionCounts = await getCategoryCountsFromTags(navItems);
 
   const slides = await getHeroSlides();
 

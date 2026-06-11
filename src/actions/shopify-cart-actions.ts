@@ -1,9 +1,9 @@
 "use server";
 
-import { createCart, addToCart, removeFromCart, updateCartLines, getCart } from "@/lib/shopify-cart";
+import { createCart, addToCart, removeFromCart, updateCartLines, getCart, applyDiscountCode } from "@/lib/shopify-cart";
 
-export async function createShopifyCart() {
-  const cart = await createCart();
+export async function createShopifyCart(lines?: Array<{ merchandiseId: string; quantity: number }>) {
+  const cart = await createCart(lines);
   return {
     id: cart.id,
     checkoutUrl: cart.checkoutUrl,
@@ -51,5 +51,15 @@ export async function getShopifyCart(cartId: string) {
     id: cart.id,
     checkoutUrl: cart.checkoutUrl,
     totalQuantity: cart.totalQuantity,
+  };
+}
+
+export async function applyDiscountCodeToShopifyCart(cartId: string, discountCodes: string[]) {
+  const cart = await applyDiscountCode(cartId, discountCodes);
+  return {
+    id: cart.id,
+    checkoutUrl: cart.checkoutUrl,
+    totalQuantity: cart.totalQuantity,
+    cost: cart.cost,
   };
 }

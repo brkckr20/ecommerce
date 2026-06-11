@@ -5,18 +5,17 @@ import { FeaturesBar } from "./FeaturesBar";
 
 const footerLinks = {
   information: [
-    { label: "Hesabım", href: "#" },
-    { label: "Giriş Yap", href: "#" },
-    { label: "Sepetim", href: "#" },
-    { label: "Favorilerim", href: "#" },
-    { label: "Ödeme", href: "#" },
+    { label: "Hesabım", href: "/hesabim" },
+    { label: "Giriş Yap", href: "/login" },
+    { label: "Sepetim", href: "/cart" },
+    { label: "Favorilerim", href: "/wishlist" },
   ],
   services: [
-    { label: "Hakkımızda", href: "#" },
-    { label: "Kariyer", href: "#" },
-    { label: "Teslimat Bilgileri", href: "#" },
-    { label: "Gizlilik Politikası", href: "#" },
-    { label: "Kullanım Koşulları", href: "#" },
+    { label: "Hakkımızda", href: "/hakkimizda" },
+
+    { label: "Teslimat Bilgileri", href: "/teslimat" },
+    { label: "Gizlilik Politikası", href: "/gizlilik-politikasi" },
+    { label: "Kullanım Koşulları", href: "/kullanim-kosullari" },
   ],
 };
 
@@ -243,9 +242,9 @@ export function Footer() {
               &copy; minimog {new Date().getFullYear()} — Tüm hakları saklıdır
             </p>
             <div className="flex items-center gap-4 text-[11px] text-text-lighter">
-              <Link href="#" className="hover:text-primary transition-colors">Gizlilik Politikası</Link>
-              <Link href="#" className="hover:text-primary transition-colors">Kullanım Koşulları</Link>
-              <Link href="#" className="hover:text-primary transition-colors">Çerez Politikası</Link>
+              <Link href="/gizlilik-politikasi" className="hover:text-primary transition-colors">Gizlilik Politikası</Link>
+              <Link href="/kullanim-kosullari" className="hover:text-primary transition-colors">Kullanım Koşulları</Link>
+              <Link href="/cerez-politikasi" className="hover:text-primary transition-colors">Çerez Politikası</Link>
             </div>
           </div>
         </div>

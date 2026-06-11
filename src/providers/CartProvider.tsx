@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import type { CartItem } from "@/types/cart";
+import { useCustomer } from "./ShopifyCustomerProvider";
 
 type FlyPhase = "idle" | "start" | "animate";
 
@@ -19,6 +20,8 @@ interface FlyState {
   toRect: DOMRect | null;
   imageUrl: string;
 }
+
+const FIRST_ORDER_DISCOUNT_CODE = "ILK15";
 
 interface CartContextValue {
   items: CartItem[];
@@ -37,6 +40,8 @@ interface CartContextValue {
   fly: FlyState;
   addingProductId: number | null;
   checkoutUrl: string | null;
+  discountApplied: boolean;
+  isFirstOrderEligible: boolean;
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -58,8 +63,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [addingProductId, setAddingProductId] = useState<number | null>(null);
   const [shopifyCartId, setShopifyCartId] = useState<string | null>(null);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
+  const [discountApplied, setDiscountApplied] = useState(false);
   const cartIconRef = useRef<HTMLButtonElement | null>(null);
   const pendingItemRef = useRef<(Omit<CartItem, "id"> & { productId: number; variantId?: string }) | null>(null);
+  const { customer } = useCustomer();
+
+  const isFirstOrderEligible = !!(customer && (customer.numberOfOrders ?? 0) === 0);
 
   useEffect(() => {
     setMounted(true);
@@ -92,31 +101,55 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const openDrawer = useCallback(() => setIsDrawerOpen(true), []);
   const closeDrawer = useCallback(() => setIsDrawerOpen(false), []);
 
-  const syncToShopify = useCallback(
-    async (currentItems: CartItem[], existingCartId: string | null) => {
+  const applyDiscount = useCallback(
+    async (cartId: string) => {
+      if (!isFirstOrderEligible) return;
       try {
-        let cartId = existingCartId;
-        if (!cartId) {
-          const { createShopifyCart, addToShopifyCart } = await import("@/actions/shopify-cart-actions");
-          const cart = await createShopifyCart();
-          cartId = cart.id;
-          setShopifyCartId(cart.id);
-          setCheckoutUrl(cart.checkoutUrl);
+        const { applyDiscountCodeToShopifyCart } = await import("@/actions/shopify-cart-actions");
+        const result = await applyDiscountCodeToShopifyCart(cartId, [FIRST_ORDER_DISCOUNT_CODE]);
+        setCheckoutUrl(result.checkoutUrl);
+        setDiscountApplied(true);
+      } catch {
+        // Discount application failed silently
+      }
+    },
+    [isFirstOrderEligible]
+  );
 
-          for (const item of currentItems) {
-            if (item.variantId) {
-              await addToShopifyCart(cartId, [
-                { merchandiseId: item.variantId, quantity: item.quantity },
-              ]);
-            }
-          }
-        }
+  const syncToShopify = useCallback(
+    async (currentItems: CartItem[]) => {
+      try {
+        const { createShopifyCart } = await import("@/actions/shopify-cart-actions");
+
+        const lines = currentItems
+          .filter((item) => item.variantId)
+          .map((item) => ({
+            merchandiseId: item.variantId!,
+            quantity: item.quantity,
+          }));
+
+        const cart = await createShopifyCart(lines.length > 0 ? lines : undefined);
+        setShopifyCartId(cart.id);
+        setCheckoutUrl(cart.checkoutUrl);
+        setDiscountApplied(false);
       } catch {
         // Shopify sync failed silently
       }
     },
     []
   );
+
+  useEffect(() => {
+    if (mounted && items.length > 0) {
+      syncToShopify(items);
+    }
+  }, [items, mounted, syncToShopify]);
+
+  useEffect(() => {
+    if (shopifyCartId && isFirstOrderEligible) {
+      applyDiscount(shopifyCartId);
+    }
+  }, [shopifyCartId, isFirstOrderEligible, applyDiscount]);
 
   const removeFromCart = useCallback(
     (id: string) => {
@@ -180,7 +213,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <CartContext.Provider
+      <CartContext.Provider
       value={{
         items,
         cartCount,
@@ -194,6 +227,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         fly,
         addingProductId,
         checkoutUrl,
+        discountApplied,
+        isFirstOrderEligible,
       }}
     >
       {children}

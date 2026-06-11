@@ -52,7 +52,8 @@ export function SearchOverlay({ open, onClose }: Props) {
     return allProducts.filter(
       (p) =>
         p.name.toLowerCase().includes(q) ||
-        p.categories?.some((c) => c.toLowerCase().includes(q)),
+        p.categories?.some((c) => c.toLowerCase().includes(q)) ||
+        p.tags?.some((t) => t.toLowerCase().includes(q)),
     ).slice(0, 8);
   }, [query, allProducts]);
 

@@ -10,7 +10,7 @@ function parsePrice(price: string): number {
 }
 
 export function CartDrawer() {
-  const { items, cartCount, isDrawerOpen, closeDrawer, removeFromCart, updateQuantity, checkoutUrl } = useCart();
+  const { items, cartCount, isDrawerOpen, closeDrawer, removeFromCart, updateQuantity, checkoutUrl, discountApplied, isFirstOrderEligible } = useCart();
   const [freeShippingLimit, setFreeShippingLimit] = useState(499);
 
   useEffect(() => {
@@ -173,6 +173,24 @@ export function CartDrawer() {
                   {subtotal.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL"}
                 </span>
               </div>
+              {discountApplied && (
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-green-600 font-medium">İlk Sipariş İndirimi (%15)</span>
+                  <span className="text-green-600 font-medium">
+                    -{(subtotal * 0.15).toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL
+                  </span>
+                </div>
+              )}
+              {isFirstOrderEligible && !discountApplied && (
+                <div className="bg-green-50 rounded-lg p-3">
+                  <p className="text-xs text-green-700 font-medium flex items-center gap-1.5">
+                    <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    İlk siparişinize %15 indirim uygulanacak
+                  </p>
+                </div>
+              )}
               <a
                 href={checkoutUrl || "#"}
                 onClick={closeDrawer}

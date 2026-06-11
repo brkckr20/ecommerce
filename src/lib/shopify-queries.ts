@@ -10,6 +10,7 @@ query Products($first: Int!, $after: String) {
         id
         handle
         title
+        tags
         descriptionHtml
         availableForSale
         totalInventory
@@ -71,6 +72,7 @@ query ProductByHandle($handle: String!) {
     id
     handle
     title
+    tags
     descriptionHtml
     availableForSale
     totalInventory
@@ -243,6 +245,7 @@ query Customer($customerAccessToken: String!) {
     lastName
     email
     phone
+    numberOfOrders
     defaultAddress {
       id
       address1
@@ -427,6 +430,52 @@ query CollectionByHandle($handle: String!) {
           }
         }
       }
+    }
+  }
+}`;
+
+export const CART_DISCOUNT_CODES_UPDATE_MUTATION = `#graphql
+mutation CartDiscountCodesUpdate($cartId: ID!, $discountCodes: [String!]) {
+  cartDiscountCodesUpdate(cartId: $cartId, discountCodes: $discountCodes) {
+    cart {
+      id
+      checkoutUrl
+      totalQuantity
+      cost {
+        subtotalAmount { amount currencyCode }
+        totalAmount { amount currencyCode }
+      }
+      discountCodes {
+        code
+        applicable
+      }
+      lines(first: 100) {
+        edges {
+          node {
+            id
+            quantity
+            merchandise {
+              ... on ProductVariant {
+                id
+                title
+                sku
+                price { amount currencyCode }
+                product {
+                  handle
+                  title
+                  images(first: 1) {
+                    edges { node { url } }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    userErrors {
+      field
+      message
     }
   }
 }`;

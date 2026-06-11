@@ -20,6 +20,7 @@ export interface Product {
   sizes: string[];
   description: string;
   categories: string[];
+  tags: string[];
   sku: string;
   rating: number;
   reviewCount: number;

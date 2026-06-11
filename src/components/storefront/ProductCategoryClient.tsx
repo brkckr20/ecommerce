@@ -52,7 +52,9 @@ export function ProductCategoryClient({ category, navItems, collectionCounts }: 
   const subCategories = useMemo(() => findNavChildren(category.slug, navItems), [category.slug, navItems]);
   const isParent = subCategories.length > 0;
 
-  const products = allProducts.filter((p) => p.categories?.includes(category.name));
+  const products = allProducts.filter((p) => 
+    p.categories?.includes(category.name) || p.tags?.includes(category.slug)
+  );
   const popularProducts = useMemo(() => [...products].sort((a, b) => b.rating - a.rating).slice(0, 8), [products]);
 
   const sizes = [...new Set(products.flatMap((p) => p.sizes))];

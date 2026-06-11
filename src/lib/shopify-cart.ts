@@ -1,4 +1,5 @@
 import { shopifyFetch } from "./shopify";
+import { CART_DISCOUNT_CODES_UPDATE_MUTATION } from "./shopify-queries";
 
 const CART_CREATE_MUTATION = `#graphql
 mutation CartCreate($input: CartInput!) {
@@ -278,4 +279,22 @@ export async function getCart(cartId: string): Promise<CartResponse["cart"] | nu
   } catch {
     return null;
   }
+}
+
+export async function applyDiscountCode(
+  cartId: string,
+  discountCodes: string[]
+): Promise<CartResponse["cart"]> {
+  const data = await shopifyFetch<{
+    cartDiscountCodesUpdate: CartResponse & { userErrors: Array<{ field: string; message: string }> };
+  }>(CART_DISCOUNT_CODES_UPDATE_MUTATION, {
+    cartId,
+    discountCodes,
+  });
+
+  if (data.cartDiscountCodesUpdate.userErrors.length > 0) {
+    throw new Error(data.cartDiscountCodesUpdate.userErrors[0].message);
+  }
+
+  return data.cartDiscountCodesUpdate.cart;
 }

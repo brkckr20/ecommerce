@@ -2,6 +2,7 @@ export interface ShopifyProduct {
   id: string;
   handle: string;
   title: string;
+  tags: string[];
   descriptionHtml: string;
   availableForSale: boolean;
   totalInventory: number;
@@ -107,6 +108,7 @@ export interface ShopifyCustomer {
   lastName: string | null;
   email: string | null;
   phone: string | null;
+  numberOfOrders?: number;
   defaultAddress?: ShopifyAddress | null;
   addresses?: { edges: Array<{ node: ShopifyAddress }> };
   orders?: { edges: Array<{ node: ShopifyOrder }> };
