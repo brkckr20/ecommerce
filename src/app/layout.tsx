@@ -3,7 +3,10 @@ import "./globals.css";
 import { CartProvider, WishlistProvider, ShopifyCustomerProvider } from "@/providers";
 import { CookieConsent, CartDrawer, FlyToCart } from "@/components/storefront";
 
+const BASE_URL = "https://minimog.com.tr";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(BASE_URL),
   title: {
     default: "eCommerce",
     template: "eCommerce · %s",

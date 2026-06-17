@@ -4,6 +4,7 @@ import { Header, Footer } from "@/components/storefront";
 export const metadata: Metadata = {
   title: "Çerez Politikası",
   description: "Minimog çerez politikası.",
+  alternates: { canonical: "https://minimog.com.tr/cerez-politikasi" },
 };
 
 export default function CookiePolicyPage() {

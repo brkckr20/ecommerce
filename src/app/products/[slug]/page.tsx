@@ -14,7 +14,10 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const product = await getProductBySlug(params.slug);
   if (!product) return { title: "Ürün Bulunamadı" };
-  return { title: product.name };
+  return {
+    title: product.name,
+    alternates: { canonical: `https://minimog.com.tr/products/${params.slug}` },
+  };
 }
 
 export default async function ProductPage({

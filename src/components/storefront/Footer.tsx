@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { FeaturesBar } from "./FeaturesBar";
+import InstagramLightbox from "./InstagramLightbox";
 
 const footerLinks = {
   information: [
@@ -36,6 +38,20 @@ const instagramPosts = [
 ];
 
 export function Footer() {
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  const nextImage = () => {
+    setLightboxIndex((prev) =>
+      prev !== null ? (prev + 1) % instagramPosts.length : null
+    );
+  };
+
+  const prevImage = () => {
+    setLightboxIndex((prev) =>
+      prev !== null ? (prev - 1 + instagramPosts.length) % instagramPosts.length : null
+    );
+  };
+
   return (
     <footer className="page-footer">
       <FeaturesBar />
@@ -52,16 +68,31 @@ export function Footer() {
           </div>
           <div className="grid grid-cols-6 gap-1.5 md:gap-2">
             {instagramPosts.map((src, i) => (
-              <a key={i} href="#" className="block aspect-square bg-background-grey overflow-hidden group" aria-label={`Instagram post ${i + 1}`}>
+              <button
+                key={i}
+                onClick={() => setLightboxIndex(i)}
+                className="block w-full aspect-square bg-background-grey overflow-hidden group cursor-pointer text-left"
+                aria-label={`Instagram post ${i + 1}`}
+              >
                 <div
                   className="w-full h-full bg-cover bg-center group-hover:scale-110 transition-transform duration-500"
                   style={{ backgroundImage: `url(${src})` }}
                 />
-              </a>
+              </button>
             ))}
           </div>
         </div>
       </div>
+
+      {lightboxIndex !== null && (
+        <InstagramLightbox
+          images={instagramPosts}
+          currentIndex={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+          onNext={nextImage}
+          onPrev={prevImage}
+        />
+      )}
 
       <div className="bg-[#F5F5F5] py-[30px] md:py-[50px]">
         <div className="max-w-[1510px] mx-auto px-4 md:px-6 lg:px-8">

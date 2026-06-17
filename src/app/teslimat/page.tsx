@@ -4,6 +4,7 @@ import { Header, Footer } from "@/components/storefront";
 export const metadata: Metadata = {
   title: "Teslimat Bilgileri",
   description: "Minimog teslimat ve kargo bilgileri.",
+  alternates: { canonical: "https://minimog.com.tr/teslimat" },
 };
 
 export default function DeliveryPage() {

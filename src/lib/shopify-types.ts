@@ -127,19 +127,31 @@ export interface ShopifyAddress {
   lastName: string | null;
 }
 
+export interface ShopifyFulfillment {
+  trackingCompany: string | null;
+  trackingNumber: string | null;
+  trackingUrl: string | null;
+  status: string | null;
+}
+
 export interface ShopifyOrder {
   id: string;
   name: string;
   totalPrice: { amount: string; currencyCode: string };
+  subtotalPrice?: { amount: string; currencyCode: string };
+  totalShippingPrice?: { amount: string; currencyCode: string };
+  totalTax?: { amount: string; currencyCode: string };
   processedAt: string;
   fulfillmentStatus: string;
   financialStatus: string;
+  shippingAddress?: ShopifyAddress | null;
+  fulfillments?: ShopifyFulfillment[];
   lineItems: {
     edges: Array<{
       node: {
         title: string;
         quantity: number;
-        variant: { id: string; title: string; image: { url: string } | null } | null;
+        variant: { id: string; title: string; image: { url: string } | null; price?: { amount: string; currencyCode: string } } | null;
       };
     }>;
   };

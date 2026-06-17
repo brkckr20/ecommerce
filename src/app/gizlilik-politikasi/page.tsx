@@ -4,6 +4,7 @@ import { Header, Footer } from "@/components/storefront";
 export const metadata: Metadata = {
   title: "Gizlilik Politikası",
   description: "Minimog gizlilik politikası.",
+  alternates: { canonical: "https://minimog.com.tr/gizlilik-politikasi" },
 };
 
 export default function PrivacyPage() {

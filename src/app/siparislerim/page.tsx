@@ -1,14 +1,24 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCustomer } from "@/providers/ShopifyCustomerProvider";
 import { Header, Footer } from "@/components/storefront";
+import { getDemoOrders } from "@/lib/demo-orders";
+
+function getOrderSlug(orderId: string) {
+  return orderId.split("/").pop() || orderId;
+}
+
+function parsePrice(amount: string): number {
+  return parseFloat(amount.replace(",", ""));
+}
 
 export default function OrdersPage() {
   const { customer, isLoading } = useCustomer();
   const router = useRouter();
+  const [showDemo, setShowDemo] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !customer) {
@@ -26,7 +36,8 @@ export default function OrdersPage() {
 
   if (!customer) return null;
 
-  const orders = customer.orders?.edges?.map((e: any) => e.node) || [];
+  const realOrders = customer.orders?.edges?.map((e: any) => e.node) || [];
+  const orders = realOrders.length > 0 ? realOrders : showDemo ? getDemoOrders() : [];
 
   return (
     <>
@@ -42,48 +53,69 @@ export default function OrdersPage() {
               </svg>
               <h2 className="text-xl font-semibold text-heading mb-2">Henüz siparişiniz yok</h2>
               <p className="text-text mb-6">Alışverişe başlayarak ilk siparişinizi oluşturabilirsiniz.</p>
-              <Link
-                href="/"
-                className="inline-block px-6 py-3 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark transition-colors"
-              >
-                Alışverişe Başla
-              </Link>
+              <div className="flex flex-col items-center gap-3">
+                <Link
+                  href="/"
+                  className="inline-block px-6 py-3 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark transition-colors"
+                >
+                  Alışverişe Başla
+                </Link>
+                <button
+                  onClick={() => setShowDemo(true)}
+                  className="text-sm text-primary hover:underline"
+                >
+                  Demo siparişleri göster
+                </button>
+              </div>
             </div>
           ) : (
-            <div className="space-y-4">
-              {orders.map((order: any) => (
-                <div key={order.id} className="bg-white rounded-lg border border-border p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <p className="text-sm font-semibold text-heading">{order.name}</p>
-                      <p className="text-xs text-text">{new Date(order.processedAt).toLocaleDateString("tr-TR")}</p>
+            <>
+              {showDemo && (
+                <p className="text-xs text-text mb-4 italic">* Demo siparişler gösteriliyor</p>
+              )}
+              <div className="space-y-4">
+                {orders.map((order: any) => (
+                  <div key={order.id} className="bg-white rounded-lg border border-border p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <p className="text-sm font-semibold text-heading">{order.name}</p>
+                        <p className="text-xs text-text">{new Date(order.processedAt).toLocaleDateString("tr-TR")}</p>
+                      </div>
+                      <span className="text-sm font-medium text-heading">
+                        {parsePrice(order.totalPrice.amount).toFixed(2)} {order.totalPrice.currencyCode}
+                      </span>
                     </div>
-                    <span className="text-sm font-medium text-heading">
-                      {parseFloat(order.totalPrice.amount).toFixed(2)} {order.totalPrice.currencyCode}
-                    </span>
+                    <div className="flex gap-2">
+                      <span className={`text-xs px-2 py-1 rounded-full ${
+                        order.fulfillmentStatus === "FULFILLED" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
+                      }`}>
+                        {order.fulfillmentStatus === "FULFILLED" ? "Teslim Edildi" : "Hazırlanıyor"}
+                      </span>
+                      <span className={`text-xs px-2 py-1 rounded-full ${
+                        order.financialStatus === "PAID" ? "bg-green-100 text-green-700" : order.financialStatus === "REFUNDED" ? "bg-red-100 text-red-700" : "bg-yellow-100 text-yellow-700"
+                      }`}>
+                        {order.financialStatus === "PAID" ? "Ödendi" : order.financialStatus === "REFUNDED" ? "İade Edildi" : "Bekliyor"}
+                      </span>
+                    </div>
+                    <div className="mt-3 flex items-center justify-between">
+                      <div className="space-y-1">
+                        {order.lineItems.edges.map((item: any, i: number) => (
+                          <p key={i} className="text-xs text-text">
+                            {item.node.title} x {item.node.quantity}
+                          </p>
+                        ))}
+                      </div>
+                      <Link
+                        href={`/siparislerim/${getOrderSlug(order.id)}`}
+                        className="text-xs text-primary hover:underline font-medium flex-shrink-0"
+                      >
+                        Detay →
+                      </Link>
+                    </div>
                   </div>
-                  <div className="flex gap-2">
-                    <span className={`text-xs px-2 py-1 rounded-full ${
-                      order.fulfillmentStatus === "FULFILLED" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
-                    }`}>
-                      {order.fulfillmentStatus === "FULFILLED" ? "Teslim Edildi" : "Hazırlanıyor"}
-                    </span>
-                    <span className={`text-xs px-2 py-1 rounded-full ${
-                      order.financialStatus === "PAID" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
-                    }`}>
-                      {order.financialStatus === "PAID" ? "Ödendi" : "Bekliyor"}
-                    </span>
-                  </div>
-                  <div className="mt-3 space-y-1">
-                    {order.lineItems.edges.map((item: any, i: number) => (
-                      <p key={i} className="text-xs text-text">
-                        {item.node.title} x {item.node.quantity}
-                      </p>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </>
           )}
         </div>
       </div>

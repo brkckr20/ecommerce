@@ -14,3 +14,7 @@ export { WishlistButton } from "./WishlistButton";
 export { SearchOverlay } from "./SearchOverlay";
 export { CertificateBar } from "./CertificateBar";
 export { AuthModal } from "./AuthModal";
+export { default as OrderTrackingTimeline } from "./OrderTrackingTimeline";
+export { default as StarRating } from "./StarRating";
+export { default as ProductReviews } from "./ProductReviews";
+export { default as InstagramLightbox } from "./InstagramLightbox";

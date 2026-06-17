@@ -280,9 +280,24 @@ query Customer($customerAccessToken: String!) {
           id
           name
           totalPrice { amount currencyCode }
+          subtotalPrice { amount currencyCode }
+          totalShippingPrice { amount currencyCode }
+          totalTax { amount currencyCode }
           processedAt
           fulfillmentStatus
           financialStatus
+          shippingAddress {
+            id
+            address1
+            address2
+            city
+            province
+            zip
+            country
+            phone
+            firstName
+            lastName
+          }
           lineItems(first: 10) {
             edges {
               node {
@@ -292,6 +307,7 @@ query Customer($customerAccessToken: String!) {
                   id
                   title
                   image { url }
+                  price { amount currencyCode }
                 }
               }
             }

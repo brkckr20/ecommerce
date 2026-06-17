@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { getCategoryBySlug, getAllCategorySlugs, getMainMenu, getCollectionsWithCounts } from "@/data/shopify.server";
+import type { Metadata } from "next";
 import type { NavMenuItem, CollectionCount } from "@/data/shopify.server";
 import type { ProductCategory } from "@/data/products";
 import { ProductCategoryClient } from "@/components/storefront/ProductCategoryClient";
@@ -9,6 +10,14 @@ export const revalidate = 60;
 
 interface Props {
   params: { slug: string };
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const category = await getCategoryBySlug(params.slug);
+  return {
+    title: category?.name ?? "Kategori",
+    alternates: { canonical: `https://minimog.com.tr/product-category/${params.slug}` },
+  };
 }
 
 function findNavItem(slug: string, items: NavMenuItem[]): NavMenuItem | undefined {

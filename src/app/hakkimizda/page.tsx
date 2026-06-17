@@ -4,6 +4,7 @@ import { Header, Footer } from "@/components/storefront";
 export const metadata: Metadata = {
   title: "Hakkımızda",
   description: "Minimog hakkında bilgi edinin.",
+  alternates: { canonical: "https://minimog.com.tr/hakkimizda" },
 };
 
 export default function AboutPage() {
