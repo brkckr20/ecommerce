@@ -466,7 +466,7 @@ export function ProductDetailClient({ product }: Props) {
                         <span className="text-heading font-medium">Ağırlık:</span> 150g
                       </li>
                       <li>
-                        <span className="text-heading font-medium">Bakım:</span> 30°C'de makinede yıkanabilir
+                        <span className="text-heading font-medium">Bakım:</span> 30°C&rsquo;de makinede yıkanabilir
                       </li>
                       <li>
                         <span className="text-heading font-medium">Menşei:</span> Türkiye
