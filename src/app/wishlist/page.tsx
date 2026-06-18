@@ -3,12 +3,14 @@
 import Link from "next/link";
 import { useWishlist } from "@/providers/WishlistProvider";
 import { WishlistButton } from "@/components/storefront/WishlistButton";
+import { Header, Footer } from "@/components/storefront";
 
 export default function WishlistPage() {
   const { items, wishlistIds } = useWishlist();
 
   return (
     <div className="min-h-screen bg-white">
+      <Header />
       <div className="max-w-[1510px] mx-auto px-4 md:px-8 py-8 md:py-16">
         <h1 className="text-2xl md:text-3xl font-medium text-heading mb-2">
           Favorilerim
@@ -101,6 +103,7 @@ export default function WishlistPage() {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 }

@@ -344,87 +344,89 @@ function MainHeader({ isSticky, initialItems }: { isSticky: boolean; initialItem
         </div>
       </div>
 
-      {isMobileMenuOpen && (
+      <div
+        className={`fixed inset-0 z-[60] md:hidden pointer-events-none transition-opacity duration-300 ${
+          isMobileMenuOpen ? "pointer-events-auto opacity-100" : "opacity-0"
+        }`}
+        onClick={() => setIsMobileMenuOpen(false)}
+      >
+        <div className="absolute inset-0 bg-black/40" />
         <div
-          className="fixed inset-0 z-[60] md:hidden"
-          onClick={() => setIsMobileMenuOpen(false)}
+          className={`absolute top-0 left-0 h-full w-80 max-w-[85vw] bg-white shadow-xl overflow-y-auto transition-transform duration-300 ease-out ${
+            isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+          onClick={(e) => e.stopPropagation()}
         >
-          <div className="absolute inset-0 bg-black/40" />
-          <div
-            className="absolute top-0 left-0 h-full w-80 max-w-[85vw] bg-white shadow-xl overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between px-4 py-4 border-b border-border">
-              <span className="font-semibold text-heading">Menü</span>
-              <button
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="p-1 hover:text-primary transition-colors"
-                aria-label="Menüyü kapat"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <nav className="px-4 py-4">
-              <ul className="space-y-1">
-                {navItems.map((item) => {
-                  const hasDropdown = item.children.length > 0;
-                  return (
-                    <li key={item.name}>
-                      {hasDropdown ? (
-                        <>
-                          <button
-                            onClick={() =>
-                              setActiveSubCategory(
-                                activeSubCategory === item.name ? null : item.name
-                              )
-                            }
-                            className="flex items-center justify-between w-full px-3 py-3 text-sm font-medium text-heading hover:bg-background-grey rounded-lg transition-colors"
-                          >
-                            {item.name}
-                            <svg
-                              className={`w-3.5 h-3.5 transition-transform ${
-                                activeSubCategory === item.name ? "rotate-180" : ""
-                              }`}
-                              fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            >
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                            </svg>
-                          </button>
-                          {activeSubCategory === item.name && (
-                            <ul className="ml-4 mt-1 space-y-0.5 border-l border-border pl-3">
-                              {item.children.map((child) => (
-                                <li key={child.href}>
-                                  <Link
-                                    href={child.href}
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className="block px-3 py-2 text-sm text-text hover:text-primary hover:bg-background-grey rounded-lg transition-colors"
-                                  >
-                                    {child.name}
-                                  </Link>
-                                </li>
-                              ))}
-                            </ul>
-                          )}
-                        </>
-                      ) : (
-                        <Link
-                          href={item.href}
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          className="block px-3 py-3 text-sm font-medium text-heading hover:bg-background-grey rounded-lg transition-colors"
+          <div className="flex items-center justify-between px-4 py-4 border-b border-border">
+            <span className="font-semibold text-heading">Menü</span>
+            <button
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="p-1 hover:text-primary transition-colors"
+              aria-label="Menüyü kapat"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <nav className="px-4 py-4">
+            <ul className="space-y-1">
+              {navItems.map((item) => {
+                const hasDropdown = item.children.length > 0;
+                return (
+                  <li key={item.name}>
+                    {hasDropdown ? (
+                      <>
+                        <button
+                          onClick={() =>
+                            setActiveSubCategory(
+                              activeSubCategory === item.name ? null : item.name
+                            )
+                          }
+                          className="flex items-center justify-between w-full px-3 py-3 text-sm font-medium text-heading hover:bg-background-grey rounded-lg transition-colors"
                         >
                           {item.name}
-                        </Link>
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
-            </nav>
-          </div>
+                          <svg
+                            className={`w-3.5 h-3.5 transition-transform ${
+                              activeSubCategory === item.name ? "rotate-180" : ""
+                            }`}
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+                        {activeSubCategory === item.name && (
+                          <ul className="ml-4 mt-1 space-y-0.5 border-l border-border pl-3">
+                            {item.children.map((child) => (
+                              <li key={child.href}>
+                                <Link
+                                  href={child.href}
+                                  onClick={() => setIsMobileMenuOpen(false)}
+                                  className="block px-3 py-2 text-sm text-text hover:text-primary hover:bg-background-grey rounded-lg transition-colors"
+                                >
+                                  {child.name}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="block px-3 py-3 text-sm font-medium text-heading hover:bg-background-grey rounded-lg transition-colors"
+                      >
+                        {item.name}
+                      </Link>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
         </div>
-      )}
+      </div>
       <SearchOverlay open={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
       <AuthModal open={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
     </header>

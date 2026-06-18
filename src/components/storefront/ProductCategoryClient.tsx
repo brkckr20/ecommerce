@@ -57,8 +57,6 @@ export function ProductCategoryClient({ category, navItems, collectionCounts }: 
   );
   const popularProducts = useMemo(() => [...products].sort((a, b) => b.rating - a.rating).slice(0, 8), [products]);
 
-  const sizes = [...new Set(products.flatMap((p) => p.sizes))];
-  const colors = [...new Set(products.flatMap((p) => p.colors))];
   const [sortBy, setSortBy] = useState("menu_order");
   const [sortOpen, setSortOpen] = useState(false);
   const [layout, setLayout] = useState("grid-four");
@@ -148,14 +146,6 @@ export function ProductCategoryClient({ category, navItems, collectionCounts }: 
     );
   }
 
-  const priceRanges = [
-    { label: "₺0.00 – ₺200.00", min: 0, max: 200 },
-    { label: "₺200.00 – ₺400.00", min: 200, max: 400 },
-    { label: "₺400.00 – ₺600.00", min: 400, max: 600 },
-    { label: "₺600.00 +", min: 600, max: Infinity },
-  ];
-  const brands = [{ name: "Minimog Baby", count: products.length }];
-  const filters = { sizes, colors, priceRanges, brands };
   const layoutCols: Record<string, { desktop: number; tablet: number; mobile: number }> = {
     "grid-one": { desktop: 1, tablet: 1, mobile: 1 },
     "grid-two": { desktop: 2, tablet: 2, mobile: 2 },
@@ -203,99 +193,98 @@ export function ProductCategoryClient({ category, navItems, collectionCounts }: 
 
       <div id="page-content" className="page-content py-10">
         <div className="container-wide">
-          <div className="row flex flex-col md:flex-row gap-8">
-            <div className="page-sidebar page-sidebar-left w-full md:w-[280px] lg:w-[300px] shrink-0">
-              <div className="page-sidebar-inner">
-                <div className="page-sidebar-content">
-                  <div className="widget widget_custom_html">
-                    <div className="textwidget">
-                      <h6 className="sidebar-top-heading text-sm font-medium text-heading uppercase tracking-wider mb-5">Filtreler</h6>
+          <div className="page-main-content">
+            <div className="shop-archive-block">
+            <div className="woocommerce-notices-wrapper" />
+
+            <div id="archive-shop-actions" className="archive-shop-actions mb-6">
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <div className="shop-actions-toolbar shop-actions-toolbar-left">
+                  <div className="inner">
+                    <div className="woocommerce-result-count archive-result-count text-sm text-text" role="alert">
+                      <p>{products.length} sonuç gösteriliyor</p>
                     </div>
                   </div>
-
-                  <div className="widget minimog-wp-widget-product-layered-nav minimog-wp-widget-filter mb-7">
-                    <p className="widget-title heading text-sm font-medium text-heading mb-3">Beden</p>
-                    <div className="widget-content">
-                      <div className="widget-content-inner">
-                        <ul className="flex flex-wrap gap-2">
-                          {filters.sizes.map((size) => (
-                            <li key={size}>
-                              <button className="term-link px-3 py-1.5 text-sm text-text border border-border hover:border-heading hover:text-heading transition-colors">
-                                <span className="term-name">{size}</span>
-                              </button>
+                </div>
+                <div className="shop-actions-toolbar shop-actions-toolbar-right">
+                  <div className="inner flex items-center gap-4">
+                    <div className="relative">
+                      <button
+                        onClick={() => setSortOpen(!sortOpen)}
+                        onBlur={() => setTimeout(() => setSortOpen(false), 150)}
+                        className="minimog-nice-select-current flex items-center gap-2 text-sm text-text border border-border px-3 py-2 min-w-[180px]"
+                      >
+                        <span className="value">Default sorting</span>
+                        <svg className="ml-auto" width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" strokeWidth="1.5">
+                          <path d="M1 1L5 5L9 1" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </button>
+                      {sortOpen && (
+                        <ul className="absolute top-full right-0 mt-0 bg-white border border-border z-20 shadow-md whitespace-nowrap min-w-full">
+                          {[
+                            { value: "menu_order", label: "Varsayılan sıralama" },
+                            { value: "popularity", label: "Popülerlik" },
+                            { value: "rating", label: "Ortalama puan" },
+                            { value: "date", label: "En yeni" },
+                            { value: "price", label: "Fiyat: düşükten yükseğe" },
+                            { value: "price-desc", label: "Fiyat: yüksekten düşüğe" },
+                          ].map((opt) => (
+                            <li
+                              key={opt.value}
+                              onClick={() => { setSortBy(opt.value); setSortOpen(false); }}
+                              className={`px-3 py-2 text-sm cursor-pointer hover:bg-background-grey transition-colors ${
+                                sortBy === opt.value ? "bg-background-grey font-medium" : "text-text"
+                              }`}
+                            >
+                              {opt.label}
                             </li>
                           ))}
                         </ul>
-                      </div>
+                      )}
                     </div>
-                  </div>
 
-                  <div className="widget minimog-wp-widget-product-layered-nav minimog-wp-widget-filter mb-7">
-                    <p className="widget-title heading text-sm font-medium text-heading mb-3">Renk</p>
-                    <div className="widget-content">
-                      <div className="widget-content-inner">
-                        <ul className="flex flex-wrap gap-2">
-                          <li className="chosen">
-                            <button className="filter-link text-xs text-text-lighter hover:text-heading transition-colors">Tümü</button>
-                          </li>
-                          {filters.colors.map((color, i) => (
-                            <li key={i}>
-                              <button
-                                className="w-6 h-6 rounded-full border border-border hover:border-heading transition-colors"
-                                style={{ backgroundColor: color }}
-                                title={color}
-                              />
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="widget minimog-wp-widget-product-price-filter minimog-wp-widget-filter mb-7">
-                    <p className="widget-title heading text-sm font-medium text-heading mb-3">Fiyat</p>
-                    <div className="widget-content">
-                      <div className="widget-content-inner">
-                        <ul className="space-y-1">
-                          {filters.priceRanges.map((range, i) => (
-                            <li key={i}>
-                              <button className="filter-link text-sm text-text hover:text-heading transition-colors">
-                                {range.label}
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="widget minimog-wp-widget-product-brand-nav minimog-wp-widget-filter mb-7">
-                    <p className="widget-title heading text-sm font-medium text-heading mb-3">Marka</p>
-                    <div className="widget-content">
-                      <div className="widget-content-inner">
-                        <ul className="space-y-1">
-                          {filters.brands.map((brand) => (
-                            <li key={brand.name}>
-                              <button className="filter-link text-sm text-text hover:text-heading transition-colors">
-                                {brand.name} <span className="text-text-lighter text-xs">({brand.count})</span>
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="widget minimog-wp-widget-product-stock-filter minimog-wp-widget-filter mb-7">
-                    <p className="widget-title heading text-sm font-medium text-heading mb-3">Stok Durumu</p>
-                    <div className="widget-content">
-                      <div className="widget-content-inner">
-                        <ul className="space-y-1">
-                          <li className="filter-item flex items-center gap-2">
-                            <input type="checkbox" id="in-stock" className="accent-heading" defaultChecked />
-                            <label htmlFor="in-stock" className="text-sm text-text cursor-pointer">Stokta</label>
-                          </li>
-                        </ul>
+                    <div id="archive-layout-switcher" className="archive-layout-switcher">
+                      <div className="inner flex items-center gap-1">
+                        {(["grid-three", "grid-four", "grid-five"] as const).map((l) => (
+                          <button
+                            key={l}
+                            onClick={() => setLayout(l)}
+                            className={`switcher-item p-1.5 border transition-colors ${
+                              layout === l
+                                ? "border-heading bg-background-grey"
+                                : "border-border hover:border-heading"
+                            }`}
+                            title={
+                              l === "grid-three" ? "3 sütun" :
+                              l === "grid-four" ? "4 sütun" : "5 sütun"
+                            }
+                          >
+                            {l === "grid-three" && (
+                              <svg width="16" height="16" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="4.25" y="2.75" width="1.5" height="12.5" rx="0.75" fill="currentColor"/>
+                                <rect x="8.25" y="2.75" width="1.5" height="12.5" rx="0.75" fill="currentColor"/>
+                                <rect x="12.25" y="2.75" width="1.5" height="12.5" rx="0.75" fill="currentColor"/>
+                              </svg>
+                            )}
+                            {l === "grid-four" && (
+                              <svg width="16" height="16" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="2.25" y="2.75" width="1.5" height="12.5" rx="0.75" fill="currentColor"/>
+                                <rect x="6.25" y="2.75" width="1.5" height="12.5" rx="0.75" fill="currentColor"/>
+                                <rect x="10.25" y="2.75" width="1.5" height="12.5" rx="0.75" fill="currentColor"/>
+                                <rect x="14.25" y="2.75" width="1.5" height="12.5" rx="0.75" fill="currentColor"/>
+                              </svg>
+                            )}
+                            {l === "grid-five" && (
+                              <svg width="16" height="16" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="0.25" y="2.75" width="1.5" height="12.5" rx="0.75" fill="currentColor"/>
+                                <rect x="4.25" y="2.75" width="1.5" height="12.5" rx="0.75" fill="currentColor"/>
+                                <rect x="8.25" y="2.75" width="1.5" height="12.5" rx="0.75" fill="currentColor"/>
+                                <rect x="12.25" y="2.75" width="1.5" height="12.5" rx="0.75" fill="currentColor"/>
+                                <rect x="16.25" y="2.75" width="1.5" height="12.5" rx="0.75" fill="currentColor"/>
+                              </svg>
+                            )}
+                          </button>
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -303,167 +292,67 @@ export function ProductCategoryClient({ category, navItems, collectionCounts }: 
               </div>
             </div>
 
-            <div className="page-main-content flex-1 min-w-0">
-              <div className="shop-archive-block">
-                <div className="woocommerce-notices-wrapper" />
+            <div id="active-filters-bar" className="active-filters-bar mb-4">
+              <div className="active-filters-list" />
+            </div>
 
-                <div id="archive-shop-actions" className="archive-shop-actions mb-6">
-                  <div className="flex items-center justify-between flex-wrap gap-4">
-                    <div className="shop-actions-toolbar shop-actions-toolbar-left">
-                      <div className="inner">
-                        <div className="woocommerce-result-count archive-result-count text-sm text-text" role="alert">
-                          <p>{products.length} sonuç gösteriliyor</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="shop-actions-toolbar shop-actions-toolbar-right">
-                      <div className="inner flex items-center gap-4">
-                        <div className="relative">
-                          <button
-                            onClick={() => setSortOpen(!sortOpen)}
-                            onBlur={() => setTimeout(() => setSortOpen(false), 150)}
-                            className="minimog-nice-select-current flex items-center gap-2 text-sm text-text border border-border px-3 py-2 min-w-[180px]"
-                          >
-                            <span className="value">Default sorting</span>
-                            <svg className="ml-auto" width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" strokeWidth="1.5">
-                              <path d="M1 1L5 5L9 1" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                          </button>
-                          {sortOpen && (
-                            <ul className="absolute top-full right-0 mt-0 bg-white border border-border z-20 shadow-md whitespace-nowrap min-w-full">
-                              {[
-                                { value: "menu_order", label: "Varsayılan sıralama" },
-                                { value: "popularity", label: "Popülerlik" },
-                                { value: "rating", label: "Ortalama puan" },
-                                { value: "date", label: "En yeni" },
-                                { value: "price", label: "Fiyat: düşükten yükseğe" },
-                                { value: "price-desc", label: "Fiyat: yüksekten düşüğe" },
-                              ].map((opt) => (
-                                <li
-                                  key={opt.value}
-                                  onClick={() => { setSortBy(opt.value); setSortOpen(false); }}
-                                  className={`px-3 py-2 text-sm cursor-pointer hover:bg-background-grey transition-colors ${
-                                    sortBy === opt.value ? "bg-background-grey font-medium" : "text-text"
-                                  }`}
-                                >
-                                  {opt.label}
-                                </li>
-                              ))}
-                            </ul>
-                          )}
-                        </div>
-
-                        <div id="archive-layout-switcher" className="archive-layout-switcher">
-                          <div className="inner flex items-center gap-1">
-                            {(["grid-three", "grid-four", "grid-five"] as const).map((l) => (
-                              <button
-                                key={l}
-                                onClick={() => setLayout(l)}
-                                className={`switcher-item p-1.5 border transition-colors ${
-                                  layout === l
-                                    ? "border-heading bg-background-grey"
-                                    : "border-border hover:border-heading"
-                                }`}
-                                title={
-                                  l === "grid-three" ? "3 sütun" :
-                                  l === "grid-four" ? "4 sütun" : "5 sütun"
-                                }
-                              >
-                                {l === "grid-three" && (
-                                  <svg width="16" height="16" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <rect x="4.25" y="2.75" width="1.5" height="12.5" rx="0.75" fill="currentColor"/>
-                                    <rect x="8.25" y="2.75" width="1.5" height="12.5" rx="0.75" fill="currentColor"/>
-                                    <rect x="12.25" y="2.75" width="1.5" height="12.5" rx="0.75" fill="currentColor"/>
-                                  </svg>
-                                )}
-                                {l === "grid-four" && (
-                                  <svg width="16" height="16" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <rect x="2.25" y="2.75" width="1.5" height="12.5" rx="0.75" fill="currentColor"/>
-                                    <rect x="6.25" y="2.75" width="1.5" height="12.5" rx="0.75" fill="currentColor"/>
-                                    <rect x="10.25" y="2.75" width="1.5" height="12.5" rx="0.75" fill="currentColor"/>
-                                    <rect x="14.25" y="2.75" width="1.5" height="12.5" rx="0.75" fill="currentColor"/>
-                                  </svg>
-                                )}
-                                {l === "grid-five" && (
-                                  <svg width="16" height="16" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <rect x="0.25" y="2.75" width="1.5" height="12.5" rx="0.75" fill="currentColor"/>
-                                    <rect x="4.25" y="2.75" width="1.5" height="12.5" rx="0.75" fill="currentColor"/>
-                                    <rect x="8.25" y="2.75" width="1.5" height="12.5" rx="0.75" fill="currentColor"/>
-                                    <rect x="12.25" y="2.75" width="1.5" height="12.5" rx="0.75" fill="currentColor"/>
-                                    <rect x="16.25" y="2.75" width="1.5" height="12.5" rx="0.75" fill="currentColor"/>
-                                  </svg>
-                                )}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+            <div
+              id="minimog-main-post"
+              className="minimog-main-post minimog-grid-wrapper minimog-product group-style-01 style-grid-01 caption-style-01"
+              style={{
+                "--grid-columns-desktop": String(layoutCols[layout].desktop),
+                "--grid-columns-tablet-extra": String(layoutCols[layout].tablet),
+                "--grid-columns-mobile-extra": String(layoutCols[layout].mobile),
+                "--grid-gutter-desktop": "15px",
+                "--grid-gutter-tablet-extra": "10px",
+                "--grid-gutter-mobile-extra": "8px",
+              } as React.CSSProperties}
+            >
+              <div key={layout} className="minimog-grid grid gap-[--grid-gutter-mobile-extra] md:gap-[--grid-gutter-tablet-extra] lg:gap-[--grid-gutter-desktop]"
+                style={{
+                  gridTemplateColumns: `repeat(var(--grid-columns-mobile-extra), 1fr)`,
+                } as React.CSSProperties}
+              >
+                <style>{`
+                  .minimog-grid > .grid-item {
+                    animation: gridFadeIn 0.35s ease-out both;
+                  }
+                  .minimog-grid > .grid-item:nth-child(1) { animation-delay: 0s; }
+                  .minimog-grid > .grid-item:nth-child(2) { animation-delay: 0.03s; }
+                  .minimog-grid > .grid-item:nth-child(3) { animation-delay: 0.06s; }
+                  .minimog-grid > .grid-item:nth-child(4) { animation-delay: 0.09s; }
+                  .minimog-grid > .grid-item:nth-child(5) { animation-delay: 0.12s; }
+                  .minimog-grid > .grid-item:nth-child(6) { animation-delay: 0.15s; }
+                  .minimog-grid > .grid-item:nth-child(7) { animation-delay: 0.18s; }
+                  .minimog-grid > .grid-item:nth-child(8) { animation-delay: 0.21s; }
+                  .minimog-grid > .grid-item:nth-child(9) { animation-delay: 0.24s; }
+                  .minimog-grid > .grid-item:nth-child(10) { animation-delay: 0.27s; }
+                  .minimog-grid > .grid-item:nth-child(n+11) { animation-delay: 0.3s; }
+                  @keyframes gridFadeIn {
+                    from { opacity: 0; transform: scale(0.92) translateY(8px); }
+                    to { opacity: 1; transform: scale(1) translateY(0); }
+                  }
+                  @media (min-width: 768px) {
+                    .minimog-grid {
+                      grid-template-columns: repeat(var(--grid-columns-tablet-extra), 1fr) !important;
+                    }
+                  }
+                  @media (min-width: 1024px) {
+                    .minimog-grid {
+                      grid-template-columns: repeat(var(--grid-columns-desktop), 1fr) !important;
+                    }
+                  }
+                `}</style>
+                {products.map((product) => (
+                  <div key={product.id} className="grid-item">
+                    <ProductCard product={product} />
                   </div>
-                </div>
-
-                <div id="active-filters-bar" className="active-filters-bar mb-4">
-                  <div className="active-filters-list" />
-                </div>
-
-                <div
-                  id="minimog-main-post"
-                  className="minimog-main-post minimog-grid-wrapper minimog-product group-style-01 style-grid-01 caption-style-01"
-                  style={{
-                    "--grid-columns-desktop": String(layoutCols[layout].desktop),
-                    "--grid-columns-tablet-extra": String(layoutCols[layout].tablet),
-                    "--grid-columns-mobile-extra": String(layoutCols[layout].mobile),
-                    "--grid-gutter-desktop": "15px",
-                    "--grid-gutter-tablet-extra": "10px",
-                    "--grid-gutter-mobile-extra": "8px",
-                  } as React.CSSProperties}
-                >
-                  <div key={layout} className="minimog-grid grid gap-[--grid-gutter-mobile-extra] md:gap-[--grid-gutter-tablet-extra] lg:gap-[--grid-gutter-desktop]"
-                    style={{
-                      gridTemplateColumns: `repeat(var(--grid-columns-mobile-extra), 1fr)`,
-                    } as React.CSSProperties}
-                  >
-                    <style>{`
-                      .minimog-grid > .grid-item {
-                        animation: gridFadeIn 0.35s ease-out both;
-                      }
-                      .minimog-grid > .grid-item:nth-child(1) { animation-delay: 0s; }
-                      .minimog-grid > .grid-item:nth-child(2) { animation-delay: 0.03s; }
-                      .minimog-grid > .grid-item:nth-child(3) { animation-delay: 0.06s; }
-                      .minimog-grid > .grid-item:nth-child(4) { animation-delay: 0.09s; }
-                      .minimog-grid > .grid-item:nth-child(5) { animation-delay: 0.12s; }
-                      .minimog-grid > .grid-item:nth-child(6) { animation-delay: 0.15s; }
-                      .minimog-grid > .grid-item:nth-child(7) { animation-delay: 0.18s; }
-                      .minimog-grid > .grid-item:nth-child(8) { animation-delay: 0.21s; }
-                      .minimog-grid > .grid-item:nth-child(9) { animation-delay: 0.24s; }
-                      .minimog-grid > .grid-item:nth-child(10) { animation-delay: 0.27s; }
-                      .minimog-grid > .grid-item:nth-child(n+11) { animation-delay: 0.3s; }
-                      @keyframes gridFadeIn {
-                        from { opacity: 0; transform: scale(0.92) translateY(8px); }
-                        to { opacity: 1; transform: scale(1) translateY(0); }
-                      }
-                      @media (min-width: 768px) {
-                        .minimog-grid {
-                          grid-template-columns: repeat(var(--grid-columns-tablet-extra), 1fr) !important;
-                        }
-                      }
-                      @media (min-width: 1024px) {
-                        .minimog-grid {
-                          grid-template-columns: repeat(var(--grid-columns-desktop), 1fr) !important;
-                        }
-                      }
-                    `}</style>
-                    {products.map((product) => (
-                      <div key={product.id} className="grid-item">
-                        <ProductCard product={product} />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <nav className="woocommerce-pagination mt-10" data-type="load-more">
-                </nav>
+                ))}
               </div>
+            </div>
+
+            <nav className="woocommerce-pagination mt-10" data-type="load-more">
+            </nav>
             </div>
           </div>
         </div>

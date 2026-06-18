@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
+import { createPortal } from "react-dom";
 import type { Product } from "@/data/products";
 import { useCart } from "@/providers/CartProvider";
 import { WishlistButton } from "./WishlistButton";
@@ -77,18 +78,18 @@ export function QuickViewModal({ product, open, onClose }: Props) {
 
   if (!mounted) return null;
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center">
+  const modal = (
+    <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center">
       <div
         className={`absolute inset-0 bg-black/50 transition-opacity duration-250 ${animIn ? "opacity-100" : "opacity-0"}`}
         onClick={onClose}
       />
       <div
-        className={`relative w-full max-w-[880px] mx-4 max-h-[90vh] overflow-y-auto bg-white shadow-2xl transition-all duration-250 ${animIn ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
+        className={`relative w-full md:max-w-[880px] md:mx-4 h-[95vh] md:h-auto max-h-full md:max-h-[90vh] bg-white shadow-2xl transition-all duration-250 md:rounded-lg overflow-hidden flex flex-col md:block ${animIn ? "opacity-100 translate-y-0 md:scale-100" : "opacity-0 translate-y-8 md:scale-95"}`}
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 w-10 h-10 md:w-8 md:h-8 flex items-center justify-center bg-white rounded-full text-heading hover:text-primary transition-colors shadow-md"
+          className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center bg-white rounded-full text-heading hover:text-primary transition-colors shadow-md"
           aria-label="Close"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -96,9 +97,9 @@ export function QuickViewModal({ product, open, onClose }: Props) {
           </svg>
         </button>
 
-        <div className="flex flex-col md:flex-row">
-          <div className="w-full md:w-1/2 bg-background-grey">
-            <div className="aspect-[3/4] relative">
+        <div className="flex flex-col md:flex-row h-full md:h-auto overflow-y-auto">
+          <div className="w-full md:w-1/2 bg-background-grey md:aspect-[3/4]">
+            <div className="aspect-square md:aspect-[3/4] relative">
               <img
                 src={product.images[activeImage]}
                 alt={product.name}
@@ -111,12 +112,12 @@ export function QuickViewModal({ product, open, onClose }: Props) {
               )}
             </div>
             {product.images.length > 1 && (
-              <div className="flex gap-2 p-3">
+              <div className="flex gap-2 p-2 md:p-3 overflow-x-auto">
                 {product.images.map((img, i) => (
                   <button
                     key={i}
                     onClick={() => setActiveImage(i)}
-                    className={`w-14 h-[18px] shrink-0 border-2 transition-colors ${activeImage === i ? "border-heading" : "border-border hover:border-text-lighter"}`}
+                    className={`w-10 md:w-14 h-3 md:h-[18px] shrink-0 border-2 transition-colors ${activeImage === i ? "border-heading" : "border-border hover:border-text-lighter"}`}
                   >
                     <img src={img} alt="" className="w-full h-full object-cover" />
                   </button>
@@ -125,12 +126,12 @@ export function QuickViewModal({ product, open, onClose }: Props) {
             )}
           </div>
 
-          <div className="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-center">
-            <h2 className="text-xl md:text-2xl font-medium text-heading mb-2">
+          <div className="w-full md:w-1/2 p-4 md:p-8 flex flex-col justify-start md:justify-center overflow-y-auto">
+            <h2 className="text-base md:text-2xl font-medium text-heading mb-1 md:mb-2">
               {product.name}
             </h2>
 
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-2 mb-2 md:mb-4">
               <div className="flex items-center gap-0.5">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <svg
@@ -145,28 +146,28 @@ export function QuickViewModal({ product, open, onClose }: Props) {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 mb-5">
+            <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-5">
               {product.originalPrice ? (
                 <>
-                  <span className="text-xl font-semibold text-primary">{product.price}</span>
-                  <span className="text-sm text-text-lighter line-through">{product.originalPrice}</span>
+                  <span className="text-base md:text-xl font-semibold text-primary">{product.price}</span>
+                  <span className="text-xs md:text-sm text-text-lighter line-through">{product.originalPrice}</span>
                 </>
               ) : (
-                <span className="text-xl font-semibold text-heading">{product.price}</span>
+                <span className="text-base md:text-xl font-semibold text-heading">{product.price}</span>
               )}
             </div>
 
             <div
-              className="text-sm text-text leading-relaxed mb-6 line-clamp-3 prose"
+              className="text-xs md:text-sm text-text leading-relaxed mb-3 md:mb-6 line-clamp-2 md:line-clamp-3 prose"
               dangerouslySetInnerHTML={{ __html: product.description }}
             />
 
             {product.colors.length > 0 && (
-              <div className="mb-4">
-                <label className="block text-xs font-medium text-heading mb-2">
+              <div className="mb-2 md:mb-4">
+                <label className="block text-xs font-medium text-heading mb-1 md:mb-2">
                   Renk: <span className="font-normal text-text">{selectedColor}</span>
                 </label>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 md:gap-2">
                   {product.colors.map((color) => (
                     <button
                       key={color}
@@ -182,7 +183,7 @@ export function QuickViewModal({ product, open, onClose }: Props) {
                           if (firstAvailable) setSelectedSize(firstAvailable.size);
                         }
                       }}
-                      className={`w-7 h-7 rounded-full border-2 transition-all ${selectedColor === color ? "border-heading scale-110" : "border-border-light-03 hover:border-text-lighter"}`}
+                      className={`w-6 h-6 md:w-7 md:h-7 rounded-full border-2 transition-all ${selectedColor === color ? "border-heading scale-110" : "border-border-light-03 hover:border-text-lighter"}`}
                       style={{ backgroundColor: color }}
                       title={color}
                     />
@@ -192,11 +193,11 @@ export function QuickViewModal({ product, open, onClose }: Props) {
             )}
 
             {product.sizes.length > 0 && (
-              <div className="mb-6">
-                <label className="block text-xs font-medium text-heading mb-2">
+              <div className="mb-3 md:mb-6">
+                <label className="block text-xs font-medium text-heading mb-1 md:mb-2">
                   Beden: <span className="font-normal text-text">{selectedSize}</span>
                 </label>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1.5 md:gap-2">
                   {product.sizes.map((size) => {
                     const hasStock = product.variants.some(
                       (v) => v.color === selectedColor && v.size === size && v.stock > 0
@@ -206,7 +207,7 @@ export function QuickViewModal({ product, open, onClose }: Props) {
                         key={size}
                         onClick={() => hasStock && setSelectedSize(size)}
                         disabled={!hasStock}
-                        className={`px-3 py-1.5 text-xs border transition-all ${
+                        className={`px-2 py-1 md:px-3 md:py-1.5 text-[11px] md:text-xs border transition-all ${
                           selectedSize === size
                             ? "border-heading bg-heading text-white"
                             : !hasStock
@@ -222,22 +223,22 @@ export function QuickViewModal({ product, open, onClose }: Props) {
               </div>
             )}
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 md:gap-3 sticky bottom-0 bg-white pt-2 md:pt-0 pb-1 md:pb-0">
               <div className="flex items-center border border-border">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-10 h-10 md:w-9 md:h-9 flex items-center justify-center text-heading hover:bg-background-grey transition-colors"
+                  className="w-9 h-9 md:w-9 md:h-9 flex items-center justify-center text-heading hover:bg-background-grey transition-colors"
                 >
-                  <svg className="w-3.5 h-3.5 md:w-3 md:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
                   </svg>
                 </button>
-                <span className="w-12 text-center text-sm text-heading font-medium">{quantity}</span>
+                <span className="w-10 md:w-12 text-center text-sm text-heading font-medium">{quantity}</span>
                 <button
                   onClick={() => setQuantity(Math.min(variantStock, quantity + 1))}
-                  className="w-10 h-10 md:w-9 md:h-9 flex items-center justify-center text-heading hover:bg-background-grey transition-colors"
+                  className="w-9 h-9 md:w-9 md:h-9 flex items-center justify-center text-heading hover:bg-background-grey transition-colors"
                 >
-                  <svg className="w-3.5 h-3.5 md:w-3 md:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
                 </button>
@@ -247,7 +248,7 @@ export function QuickViewModal({ product, open, onClose }: Props) {
                   ref={btnRef}
                   onClick={handleAddToCart}
                   disabled={isLoading || variantStock === 0}
-                  className="flex-1 bg-heading text-white text-sm font-medium py-2.5 px-6 hover:bg-primary transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="flex-1 bg-heading text-white text-xs md:text-sm font-medium py-2.5 md:py-2.5 px-4 md:px-6 hover:bg-primary transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {variantStock === 0 ? (
                     <span>Stokta Yok</span>
@@ -273,8 +274,8 @@ export function QuickViewModal({ product, open, onClose }: Props) {
                   image: product.images[activeImage],
                   slug: product.href.replace("/products/", ""),
                 }}
-                className="w-10 h-10 md:w-9 md:h-9 flex items-center justify-center border border-border text-heading hover:bg-heading hover:text-white transition-all shrink-0"
-                iconClass="w-4 h-4"
+                className="w-9 h-9 md:w-9 md:h-9 flex items-center justify-center border border-border text-heading hover:bg-heading hover:text-white transition-all shrink-0"
+                iconClass="w-3.5 h-3.5 md:w-4 md:h-4"
               />
             </div>
           </div>
@@ -282,4 +283,6 @@ export function QuickViewModal({ product, open, onClose }: Props) {
       </div>
     </div>
   );
+
+  return createPortal(modal, document.body);
 }
