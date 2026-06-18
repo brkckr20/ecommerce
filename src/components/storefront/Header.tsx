@@ -326,7 +326,7 @@ function MainHeader({ isSticky, initialItems }: { isSticky: boolean; initialItem
             </Link>
 
             <button
-              ref={cartIconRef}
+               ref={cartIconRef as React.RefObject<HTMLButtonElement>}
               onClick={openDrawer}
               className="p-2 hover:text-primary transition-colors relative"
               aria-label="Sepet"

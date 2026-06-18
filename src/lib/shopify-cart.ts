@@ -198,7 +198,7 @@ interface CartResponse {
 }
 
 export async function createCart(lines?: CartLineInput[]): Promise<CartResponse["cart"]> {
-  const variables: { input: { lines?: CartLineInput[] } } = {};
+  const variables: { input?: { lines?: CartLineInput[] } } = {};
   if (lines && lines.length > 0) {
     variables.input = { lines };
   } else {

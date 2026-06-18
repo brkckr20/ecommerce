@@ -164,7 +164,7 @@ export async function getAllProducts(): Promise<Product[]> {
   let hasNext = true;
 
   while (hasNext) {
-    const data = await shopifyFetch<ProductsResponse>(PRODUCTS_QUERY, {
+    const data: ProductsResponse = await shopifyFetch<ProductsResponse>(PRODUCTS_QUERY, {
       first: 250,
       after,
     });

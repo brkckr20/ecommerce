@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import StarRating from "./StarRating";
-import { submitReview } from "@/lib/reviews";
+import { submitReview, fetchReviewStats } from "@/lib/reviews";
 import { useCustomer } from "@/providers/ShopifyCustomerProvider";
 import type { Review, ReviewFormData } from "@/lib/reviews";
 
