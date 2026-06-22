@@ -12,6 +12,9 @@ export const metadata: Metadata = {
     template: "eCommerce · %s",
   },
   description: "Baby & Kids Textile E-Commerce",
+  icons: {
+    icon: "/icon.png",
+  },
 };
 
 export default function RootLayout({
