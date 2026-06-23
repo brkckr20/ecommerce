@@ -76,12 +76,12 @@ export default function ImageGallery({ images, onChange }: ImageGalleryProps) {
         onDrop={handleDrop}
         onClick={() => inputRef.current?.click()}
         className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 transition-colors ${
-          dragging ? "border-[#DA3F3F] bg-[#DA3F3F]/5" : "border-[#EEEEEE] hover:border-[#DA3F3F]/50"
+          dragging ? "border-[#78726D] bg-[#78726D]/5" : "border-[#EEEEEE] hover:border-[#78726D]/50"
         }`}
       >
         {uploading ? (
           <div className="flex flex-col items-center gap-2">
-            <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#DA3F3F] border-t-transparent" />
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#78726D] border-t-transparent" />
             <span className="text-xs text-[#ABABAB]">Yükleniyor...</span>
           </div>
         ) : (
@@ -106,12 +106,12 @@ export default function ImageGallery({ images, onChange }: ImageGalleryProps) {
               onDragOver={(e) => handleDragOver(e, index)}
               onDragEnd={handleDragEnd}
               className={`relative cursor-grab rounded-lg border-2 transition-all ${
-                dragIndex === index ? "border-[#DA3F3F] opacity-50" : "border-[#EEEEEE]"
-              } ${index === 0 ? "ring-2 ring-[#DA3F3F]" : ""}`}
+                dragIndex === index ? "border-[#78726D] opacity-50" : "border-[#EEEEEE]"
+              } ${index === 0 ? "ring-2 ring-[#78726D]" : ""}`}
             >
               <img src={url} alt="" className="h-20 w-20 rounded-lg object-cover" />
               {index === 0 && (
-                <span className="absolute -top-2 left-1/2 -translate-x-1/2 rounded bg-[#DA3F3F] px-1.5 py-0.5 text-[9px] font-medium text-white whitespace-nowrap">
+                <span className="absolute -top-2 left-1/2 -translate-x-1/2 rounded bg-[#78726D] px-1.5 py-0.5 text-[9px] font-medium text-white whitespace-nowrap">
                   Ana Görsel
                 </span>
               )}

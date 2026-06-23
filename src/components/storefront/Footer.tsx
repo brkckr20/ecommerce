@@ -60,7 +60,7 @@ export function Footer() {
         <div className="max-w-[1510px] mx-auto px-4 md:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-4">
             <h4 className="text-xs text-text-lighter uppercase tracking-wider font-medium">
-              Instagram <span className="text-primary">@minimog</span>
+              Instagram <span className="text-primary">@somni</span>
             </h4>
             <a href="#" className="text-xs text-text hover:text-primary transition-colors font-medium">
               Takip Et
@@ -101,7 +101,7 @@ export function Footer() {
               <h4 className="text-lg font-semibold text-heading mb-4">Şirket</h4>
               <Link href="/">
                 <span className="text-2xl font-bold font-heading text-heading tracking-wider block mb-4">
-                  MINIMOG
+                  SOMNI
                 </span>
               </Link>
 
@@ -270,7 +270,7 @@ export function Footer() {
 
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-4 border-t border-border">
             <p className="text-xs text-text-lighter">
-              &copy; minimog {new Date().getFullYear()} — Tüm hakları saklıdır
+              &copy; somni {new Date().getFullYear()} — Tüm hakları saklıdır
             </p>
             <div className="flex items-center gap-4 text-[11px] text-text-lighter">
               <Link href="/gizlilik-politikasi" className="hover:text-primary transition-colors">Gizlilik Politikası</Link>

@@ -55,12 +55,12 @@ export default function SingleImageUpload({ value, onChange }: Props) {
           onDrop={handleDrop}
           onClick={() => inputRef.current?.click()}
           className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 transition-colors ${
-            dragging ? "border-[#DA3F3F] bg-[#DA3F3F]/5" : "border-[#EEEEEE] hover:border-[#DA3F3F]/50"
+            dragging ? "border-[#78726D] bg-[#78726D]/5" : "border-[#EEEEEE] hover:border-[#78726D]/50"
           }`}
         >
           {uploading ? (
             <div className="flex items-center gap-2">
-              <div className="h-5 w-5 animate-spin rounded-full border-2 border-[#DA3F3F] border-t-transparent" />
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-[#78726D] border-t-transparent" />
               <span className="text-xs text-[#ABABAB]">Yükleniyor...</span>
             </div>
           ) : (

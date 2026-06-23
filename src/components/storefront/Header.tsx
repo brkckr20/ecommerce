@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
+
 import { useCustomer } from "@/providers/ShopifyCustomerProvider";
 import { useCart } from "@/providers/CartProvider";
 import { useWishlist } from "@/providers/WishlistProvider";
@@ -173,14 +173,9 @@ function MainHeader({ isSticky, initialItems }: { isSticky: boolean; initialItem
             </button>
 
             <Link href="/" className="flex-shrink-0">
-              <Image
-                src="/icon.png"
-                alt="Minimog"
-                width={140}
-                height={40}
-                className="h-8 md:h-10 w-auto"
-                priority
-              />
+              <span className="text-2xl md:text-3xl font-bold font-heading text-heading tracking-wider">
+                Somni
+              </span>
             </Link>
           </div>
 

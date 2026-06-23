@@ -77,6 +77,15 @@ body {
   }
 }
 
+@keyframes letterPop {
+  0%, 10%, 100% { transform: translateY(0); }
+  5% { transform: translateY(-20px); }
+}
+
+.animate-letter-pop {
+  animation: letterPop 4.5s ease-in-out infinite;
+}
+
 /* Swiper overrides */
 .swiper-pagination-bullet {
   width: 10px !important;

@@ -95,7 +95,7 @@ export function ProductCard({ product }: Props) {
           {hasOptions ? (
             <Link
               href={product.href}
-              className="block w-full bg-heading text-white text-xs font-medium py-2.5 text-center transition-colors duration-200 hover:bg-[#DA3F3F]"
+              className="block w-full bg-heading text-white text-xs font-medium py-2.5 text-center transition-colors duration-200 hover:bg-[#78726D]"
             >
               Seçenekler
             </Link>
@@ -104,7 +104,7 @@ export function ProductCard({ product }: Props) {
               ref={btnRef}
               onClick={handleAddToCart}
               disabled={isLoading}
-              className="w-full bg-heading text-white text-xs font-medium py-2.5 transition-colors duration-200 hover:bg-[#DA3F3F] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full bg-heading text-white text-xs font-medium py-2.5 transition-colors duration-200 hover:bg-[#78726D] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>

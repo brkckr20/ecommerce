@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   },
   description: "Baby & Kids Textile E-Commerce",
   icons: {
-    icon: "/icon.png",
+    icon: "/favicon.png",
   },
 };
 

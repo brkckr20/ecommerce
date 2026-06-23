@@ -16,14 +16,17 @@ export function LoadingScreen() {
         visible ? "opacity-100" : "opacity-0"
       }`}
     >
-      <h1 className="text-4xl md:text-5xl font-bold font-heading text-heading tracking-wider">
-        MINIMOG
+      <h1 className="text-4xl md:text-5xl font-bold font-heading text-heading tracking-wider flex">
+        {"Somni".split("").map((letter, i) => (
+          <span
+            key={i}
+            className="inline-block animate-letter-pop"
+            style={{ animationDelay: `${i * 0.5}s` }}
+          >
+            {letter}
+          </span>
+        ))}
       </h1>
-      <div className="mt-6 flex gap-1.5">
-        <span className="w-2 h-2 rounded-full bg-heading animate-bounce" style={{ animationDelay: "0ms" }} />
-        <span className="w-2 h-2 rounded-full bg-heading animate-bounce" style={{ animationDelay: "150ms" }} />
-        <span className="w-2 h-2 rounded-full bg-heading animate-bounce" style={{ animationDelay: "300ms" }} />
-      </div>
     </div>
   );
 }
