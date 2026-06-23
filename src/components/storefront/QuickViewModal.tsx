@@ -4,6 +4,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
 import type { Product } from "@/data/products";
 import { useCart } from "@/providers/CartProvider";
+import Image from "next/image";
 import { WishlistButton } from "./WishlistButton";
 
 interface Props {
@@ -100,10 +101,11 @@ export function QuickViewModal({ product, open, onClose }: Props) {
         <div className="flex flex-col md:flex-row h-full md:h-auto overflow-y-auto">
           <div className="w-full md:w-1/2 bg-background-grey md:aspect-[3/4]">
             <div className="aspect-square md:aspect-[3/4] relative">
-              <img
+              <Image
                 src={product.images[activeImage]}
                 alt={product.name}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
               />
               {product.originalPrice && (
                 <span className="absolute top-4 left-4 bg-primary text-white text-xs font-semibold px-2.5 py-1">
@@ -119,7 +121,7 @@ export function QuickViewModal({ product, open, onClose }: Props) {
                     onClick={() => setActiveImage(i)}
                     className={`w-10 md:w-14 h-3 md:h-[18px] shrink-0 border-2 transition-colors ${activeImage === i ? "border-heading" : "border-border hover:border-text-lighter"}`}
                   >
-                    <img src={img} alt="" className="w-full h-full object-cover" />
+                    <Image src={img} alt="" width={40} height={18} className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>

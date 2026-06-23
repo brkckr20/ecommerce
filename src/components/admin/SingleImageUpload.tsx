@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Image from "next/image";
 
 interface Props {
   value: string;
@@ -39,7 +40,7 @@ export default function SingleImageUpload({ value, onChange }: Props) {
     <div>
       {value ? (
         <div className="relative inline-block">
-          <img src={value} alt="" className="h-32 rounded-lg border border-[#EEEEEE] object-cover" />
+          <Image src={value} alt="" width={200} height={128} className="h-32 rounded-lg border border-[#EEEEEE] object-cover" />
           <button
             type="button"
             onClick={() => onChange("")}
@@ -55,12 +56,12 @@ export default function SingleImageUpload({ value, onChange }: Props) {
           onDrop={handleDrop}
           onClick={() => inputRef.current?.click()}
           className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 transition-colors ${
-            dragging ? "border-[#78726D] bg-[#78726D]/5" : "border-[#EEEEEE] hover:border-[#78726D]/50"
+            dragging ? "border-primary bg-primary/5" : "border-[#EEEEEE] hover:border-primary/50"
           }`}
         >
           {uploading ? (
             <div className="flex items-center gap-2">
-              <div className="h-5 w-5 animate-spin rounded-full border-2 border-[#78726D] border-t-transparent" />
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
               <span className="text-xs text-[#ABABAB]">Yükleniyor...</span>
             </div>
           ) : (

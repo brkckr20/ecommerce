@@ -1,36 +1,30 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { useCustomer } from "@/providers/ShopifyCustomerProvider";
 import { Header, Footer } from "@/components/storefront";
 import PageMeta from "@/components/storefront/PageMeta";
 import OrderTrackingTimeline from "@/components/storefront/OrderTrackingTimeline";
-import { simulateFulfillments, getPaymentStatusLabel, getFulfillmentStatusLabel } from "@/lib/tracking-simulation";
-import { getDemoOrders } from "@/lib/demo-orders";
 import { CancelReturnForm } from "@/components/storefront/order/CancelReturnForm";
+import { simulateFulfillments, getFulfillmentStatusLabel, getPaymentStatusLabel } from "@/lib/tracking-simulation";
+import { getDemoOrders } from "@/lib/demo-orders";
 import type { ShopifyOrder } from "@/lib/shopify-types";
 
 function parsePrice(amount: string): number {
   return parseFloat(amount.replace(",", ""));
 }
 
-export default function OrderDetailPage({ params }: { params: { id: string } }) {
-  const { id } = params;
-  const { customer, isLoading } = useCustomer();
+export default function GuestOrderDetailPage() {
+  const params = useParams();
+  const no = params.no as string;
   const [order, setOrder] = useState<ShopifyOrder | null>(null);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
-    const allOrders = [
-      ...(customer?.orders?.edges?.map((e: any) => e.node as ShopifyOrder) || []),
-      ...getDemoOrders(),
-    ];
-
-    const found = allOrders.find((o: ShopifyOrder) => {
-      const orderId = o.id.split("/").pop();
-      return orderId === id || o.name.replace("#", "") === id;
-    });
+    const allOrders = getDemoOrders();
+    const found = allOrders.find((o) => o.name.replace("#", "") === no);
 
     if (found) {
       const enriched = {
@@ -38,28 +32,24 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
         fulfillments: simulateFulfillments(found.fulfillmentStatus, found.processedAt),
       };
       setOrder(enriched);
+    } else {
+      setNotFound(true);
     }
-  }, [customer, isLoading, id]);
+  }, [no]);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <PageMeta title="Sipariş Detayı" />
-        <p className="text-text">Yükleniyor...</p>
-      </div>
-    );
-  }
-
-  if (!order) {
+  if (notFound) {
     return (
       <>
-        <PageMeta title="Sipariş Bulunamadı" />
+        <PageMeta title="Sipariş Bulunamadı" description="Geçersiz sipariş numarası." />
         <Header />
         <div className="min-h-screen bg-background-grey py-10 md:py-16">
           <div className="max-w-4xl mx-auto px-4 text-center">
             <h1 className="text-2xl font-bold text-heading mb-4">Sipariş Bulunamadı</h1>
-            <Link href="/siparislerim" className="text-primary hover:underline text-sm">
-              Siparişlerime Dön
+            <p className="text-text text-sm mb-6">
+              Bu numaraya ait bir sipariş bulunamadı. Lütfen sipariş numaranızı kontrol edin.
+            </p>
+            <Link href="/siparis-takip" className="text-primary hover:underline text-sm">
+              Tekrar Sorgula
             </Link>
           </div>
         </div>
@@ -68,9 +58,18 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
     );
   }
 
+  if (!order) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <PageMeta title="Sipariş Detayı" />
+        <p className="text-text">Yükleniyor...</p>
+      </div>
+    );
+  }
+
   const items = order.lineItems?.edges?.map((e: any) => e.node) || [];
-  const statusColor = (status: string) =>
-    status === "FULFILLED" || status === "PAID"
+  const statusColor = (s: string) =>
+    s === "FULFILLED" || s === "PAID"
       ? "bg-green-100 text-green-700"
       : "bg-yellow-100 text-yellow-700";
 
@@ -80,9 +79,9 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
       <Header />
       <div className="min-h-screen bg-background-grey py-10 md:py-16">
         <div className="max-w-4xl mx-auto px-4">
-          <div className="flex items-center gap-2 mb-8">
-            <Link href="/siparislerim" className="text-sm text-primary hover:underline">
-              Siparişlerim
+          <div className="flex items-center gap-2 mb-6">
+            <Link href="/siparis-takip" className="text-sm text-primary hover:underline">
+              Sipariş Takip
             </Link>
             <span className="text-sm text-text-lighter">/</span>
             <span className="text-sm text-text">{order.name}</span>
@@ -151,22 +150,6 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                       {getPaymentStatusLabel(order.financialStatus)}
                     </span>
                   </div>
-                  {(order as any).subtotalPrice && (
-                    <div className="flex justify-between pt-3 border-t border-border">
-                      <span className="text-text">Ara Toplam</span>
-                      <span className="text-heading">
-                        {parsePrice((order as any).subtotalPrice.amount).toFixed(2)} {(order as any).subtotalPrice.currencyCode}
-                      </span>
-                    </div>
-                  )}
-                  {(order as any).totalShippingPrice && parsePrice((order as any).totalShippingPrice.amount) > 0 && (
-                    <div className="flex justify-between">
-                      <span className="text-text">Kargo</span>
-                      <span className="text-heading">
-                        {parsePrice((order as any).totalShippingPrice.amount).toFixed(2)} {(order as any).totalShippingPrice.currencyCode}
-                      </span>
-                    </div>
-                  )}
                   <div className="flex justify-between pt-3 border-t border-border">
                     <span className="text-text font-semibold">Toplam</span>
                     <span className="text-heading font-bold">
@@ -175,55 +158,6 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                   </div>
                 </div>
               </div>
-
-              {order.fulfillments && order.fulfillments.length > 0 && (
-                <div className="bg-white rounded-lg border border-border p-6">
-                  <h2 className="text-lg font-semibold text-heading mb-4">Kargo Bilgisi</h2>
-                  {order.fulfillments.map((f, i) => (
-                    <div key={i} className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-text">Kargo Firması</span>
-                        <span className="text-heading font-medium">{f.trackingCompany || "Belirtilmemiş"}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-text">Takip No</span>
-                        <span className="text-heading font-medium">{f.trackingNumber || "—"}</span>
-                      </div>
-                      {f.trackingUrl && (
-                        <a
-                          href={f.trackingUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-block mt-2 text-sm text-primary hover:underline"
-                        >
-                          Kargoyu Takip Et →
-                        </a>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {order.shippingAddress && (
-                <div className="bg-white rounded-lg border border-border p-6">
-                  <h2 className="text-lg font-semibold text-heading mb-4">Teslimat Adresi</h2>
-                  <div className="text-sm text-text space-y-1">
-                    {order.shippingAddress.firstName && order.shippingAddress.lastName && (
-                      <p className="text-heading font-medium">
-                        {order.shippingAddress.firstName} {order.shippingAddress.lastName}
-                      </p>
-                    )}
-                    {order.shippingAddress.address1 && <p>{order.shippingAddress.address1}</p>}
-                    {order.shippingAddress.address2 && <p>{order.shippingAddress.address2}</p>}
-                    <p>
-                      {[order.shippingAddress.city, order.shippingAddress.province, order.shippingAddress.zip]
-                        .filter(Boolean)
-                        .join(" / ")}
-                    </p>
-                    {order.shippingAddress.phone && <p>{order.shippingAddress.phone}</p>}
-                  </div>
-                </div>
-              )}
 
               <CancelReturnForm order={order} />
             </div>

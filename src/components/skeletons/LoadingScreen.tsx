@@ -16,17 +16,18 @@ export function LoadingScreen() {
         visible ? "opacity-100" : "opacity-0"
       }`}
     >
-      <h1 className="text-4xl md:text-5xl font-bold font-heading text-heading tracking-wider flex">
-        {"Somni".split("").map((letter, i) => (
+      <h1 className="text-4xl md:text-5xl font-bold font-heading text-heading tracking-wider">
+        Somni
+      </h1>
+      <div className="flex items-center gap-2 mt-4">
+        {[0, 1, 2].map((i) => (
           <span
             key={i}
-            className="inline-block animate-letter-pop"
-            style={{ animationDelay: `${i * 0.5}s` }}
-          >
-            {letter}
-          </span>
+            className="w-2 h-2 rounded-full bg-primary inline-block animate-dot-bounce"
+            style={{ animationDelay: `${i * 0.2}s` }}
+          />
         ))}
-      </h1>
+      </div>
     </div>
   );
 }

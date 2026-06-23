@@ -1,14 +1,14 @@
 import { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = "https://minimog.com.tr";
+  const baseUrl = "https://somni.com.tr";
 
   return {
     rules: [
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/cart", "/hesabim", "/siparislerim", "/api/"],
+        disallow: ["/cart", "/wishlist", "/login", "/hesabim", "/siparislerim", "/siparis-takip/*", "/api/"],
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,

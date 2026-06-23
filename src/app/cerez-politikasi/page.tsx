@@ -4,7 +4,7 @@ import { Header, Footer } from "@/components/storefront";
 export const metadata: Metadata = {
   title: "Çerez Politikası",
   description: "Minimog çerez politikası.",
-  alternates: { canonical: "https://minimog.com.tr/cerez-politikasi" },
+  alternates: { canonical: "https://somni.com.tr/cerez-politikasi" },
 };
 
 export default function CookiePolicyPage() {
@@ -111,7 +111,7 @@ export default function CookiePolicyPage() {
                 <h2 className="text-2xl font-bold text-heading mb-4">6. İletişim</h2>
                 <p>
                   Çerez politikamız hakkında sorularınız için 
-                  hello@domain.com adresinden bize ulaşabilirsiniz.
+                  info@somni.com.tr adresinden bize ulaşabilirsiniz.
                 </p>
               </div>
             </div>

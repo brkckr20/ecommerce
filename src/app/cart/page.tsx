@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCart } from "@/providers/CartProvider";
 import { Header, Footer } from "@/components/storefront";
+import PageMeta from "@/components/storefront/PageMeta";
 
 export default function CartPage() {
   const { items, removeFromCart, updateQuantity, cartCount, checkoutUrl, discountApplied, isFirstOrderEligible } = useCart();
@@ -12,6 +13,7 @@ export default function CartPage() {
   if (cartCount === 0) {
     return (
       <>
+        <PageMeta title="Sepetim" description="Sepetinizdeki ürünleri görüntüleyin ve ödemeye geçin." />
         <Header />
         <div className="min-h-[60vh] flex items-center justify-center">
           <div className="text-center px-4">
@@ -37,6 +39,7 @@ export default function CartPage() {
 
   return (
     <>
+      <PageMeta title="Sepetim" description="Sepetinizdeki ürünleri görüntüleyin ve ödemeye geçin." />
       <Header />
       <div className="bg-background-grey min-h-screen py-8 md:py-16">
         <div className="max-w-[1510px] mx-auto px-4 md:px-8">

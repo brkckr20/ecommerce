@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 import { useCustomer } from "@/providers/ShopifyCustomerProvider";
 import { useCart } from "@/providers/CartProvider";
@@ -55,7 +56,7 @@ function FreeDeliveryBar() {
   }, []);
 
   return (
-    <div className="bg-primary text-white text-sm py-2.5">
+    <div className="bg-primary text-heading text-sm py-2.5">
       <div className="container-wide text-center">
         <span>
           {bannerText
@@ -160,7 +161,7 @@ function MainHeader({ isSticky, initialItems }: { isSticky: boolean; initialItem
   return (
     <header ref={headerRef} className={`bg-white border-b border-border transition-all duration-300 ${isSticky ? "fixed top-0 left-0 right-0 z-50 shadow-md" : "relative"}`}>
       <div className="max-w-[1510px] mx-auto px-4 md:px-8">
-        <div className="header-wrap flex items-center justify-between py-4 gap-2">
+        <div className="header-wrap flex items-center justify-between py-2 gap-2">
           <div className="header-left flex items-center gap-4 shrink-0">
             <button
               className="md:hidden p-2 hover:bg-background-grey rounded-lg transition-colors shrink-0"
@@ -173,9 +174,7 @@ function MainHeader({ isSticky, initialItems }: { isSticky: boolean; initialItem
             </button>
 
             <Link href="/" className="flex-shrink-0">
-              <span className="text-2xl md:text-3xl font-bold font-heading text-heading tracking-wider">
-                Somni
-              </span>
+              <Image src="/icon.svg" alt="Somni" width={140} height={27} priority className="w-[140px] h-auto" />
             </Link>
           </div>
 

@@ -4,7 +4,7 @@ import { Header, Footer } from "@/components/storefront";
 export const metadata: Metadata = {
   title: "Hakkımızda",
   description: "Minimog hakkında bilgi edinin.",
-  alternates: { canonical: "https://minimog.com.tr/hakkimizda" },
+  alternates: { canonical: "https://somni.com.tr/hakkimizda" },
 };
 
 export default function AboutPage() {
@@ -90,7 +90,7 @@ export default function AboutPage() {
 
             <div className="text-center">
               <h2 className="text-2xl md:text-3xl font-bold text-heading mb-4">Bize Ulaşın</h2>
-              <p className="text-text mb-2">E-posta: hello@domain.com</p>
+              <p className="text-text mb-2">E-posta: info@somni.com.tr</p>
               <p className="text-text">Telefon: +90 (212) 123 45 67</p>
             </div>
           </div>

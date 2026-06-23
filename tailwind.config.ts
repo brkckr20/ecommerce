@@ -10,9 +10,9 @@ const config: Config = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#78726D",
-          light: "#A39D99",
-          dark: "#544F4B",
+          DEFAULT: "#E8CA8E",
+          light: "#F0DCB4",
+          dark: "#D4B06E",
         },
         secondary: "#000000",
         text: {
@@ -34,8 +34,8 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ["Jost", "system-ui", "sans-serif"],
-        heading: ["Jost", "system-ui", "sans-serif"],
+        sans: ["Quicksand", "system-ui", "sans-serif"],
+        heading: ["Quicksand", "system-ui", "sans-serif"],
       },
       container: {
         center: true,

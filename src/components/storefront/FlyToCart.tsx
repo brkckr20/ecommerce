@@ -36,6 +36,7 @@ export function FlyToCart() {
         opacity: isAnimate && to ? 0 : 1,
       }}
     >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={fly.imageUrl}
         alt=""

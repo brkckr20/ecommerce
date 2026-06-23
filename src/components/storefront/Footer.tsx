@@ -16,6 +16,8 @@ const footerLinks = {
     { label: "Hakkımızda", href: "/hakkimizda" },
 
     { label: "Teslimat Bilgileri", href: "/teslimat" },
+    { label: "İade & Değişim", href: "/iade-kosullari" },
+    { label: "Sipariş Takip", href: "/siparis-takip" },
     { label: "Gizlilik Politikası", href: "/gizlilik-politikasi" },
     { label: "Kullanım Koşulları", href: "/kullanim-kosullari" },
   ],
@@ -107,8 +109,8 @@ export function Footer() {
 
               <ul className="space-y-2">
                 <li>
-                  <a href="mailto:hello@domain.com" className="text-sm text-text hover:text-primary transition-colors">
-                    hello@domain.com
+                  <a href="mailto:info@somni.com.tr" className="text-sm text-text hover:text-primary transition-colors">
+                    info@somni.com.tr
                   </a>
                 </li>
               </ul>

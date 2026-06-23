@@ -4,7 +4,7 @@ import { Header, Footer } from "@/components/storefront";
 export const metadata: Metadata = {
   title: "Gizlilik Politikası",
   description: "Minimog gizlilik politikası.",
-  alternates: { canonical: "https://minimog.com.tr/gizlilik-politikasi" },
+  alternates: { canonical: "https://somni.com.tr/gizlilik-politikasi" },
 };
 
 export default function PrivacyPage() {
@@ -111,7 +111,7 @@ export default function PrivacyPage() {
               <div>
                 <h2 className="text-2xl font-bold text-heading mb-4">8. İletişim</h2>
                 <p>
-                  Gizlilik politikamız hakkında sorularınız için hello@domain.com 
+                  Gizlilik politikamız hakkında sorularınız için info@somni.com.tr 
                   adresinden bize ulaşabilirsiniz.
                 </p>
               </div>

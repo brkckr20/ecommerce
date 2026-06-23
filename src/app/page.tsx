@@ -5,9 +5,20 @@ import { getMainMenu, getCategoryCountsFromTags, getHeroSlides } from "@/data/sh
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: "Minimog | Bebek & Çocuk Giyim",
-  description: "Minimog ile bebek ve çocuk giyimde kaliteyi keşfedin. Şık, rahat ve doğal kumaşlardan üretilen bebek body, pijama, zıbın ve daha fazlası.",
-  alternates: { canonical: "https://minimog.com.tr" },
+  title: "Somni | Bebek & Çocuk Giyim",
+  description: "Somni ile bebek ve çocuk giyimde kaliteyi keşfedin. Şık, rahat ve doğal kumaşlardan üretilen bebek body, pijama, zıbın ve daha fazlası.",
+  alternates: { canonical: "https://somni.com.tr" },
+  openGraph: {
+    title: "Somni | Bebek & Çocuk Giyim",
+    description: "Somni ile bebek ve çocuk giyimde kaliteyi keşfedin.",
+    url: "https://somni.com.tr",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Somni | Bebek & Çocuk Giyim",
+    description: "Somni ile bebek ve çocuk giyimde kaliteyi keşfedin.",
+  },
 };
 
 export default async function HomePage() {

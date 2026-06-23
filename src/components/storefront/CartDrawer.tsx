@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useCart } from "@/providers/CartProvider";
 import { getSiteSettingsAction } from "@/actions/settings-actions";
 import Link from "next/link";
+import Image from "next/image";
 
 function parsePrice(price: string): number {
   return parseFloat(price.replace(/[^0-9.,]/g, ""));
@@ -100,9 +101,11 @@ export function CartDrawer() {
                 {items.map((item) => (
                   <li key={item.id} className="flex gap-4 pb-4 border-b border-border">
                     <div className="w-20 h-24 shrink-0 bg-background-grey">
-                      <img
+                      <Image
                         src={item.image}
                         alt={item.name}
+                        width={80}
+                        height={96}
                         className="w-full h-full object-cover"
                       />
                     </div>

@@ -14,9 +14,26 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const category = await getCategoryBySlug(params.slug);
+  const name = category?.name ?? "Kategori";
+  const description = category?.description
+    ? category.description.slice(0, 160)
+    : `${name} kategorisindeki bebek ve çocuk giyim ürünlerini keşfedin.`;
   return {
-    title: category?.name ?? "Kategori",
-    alternates: { canonical: `https://minimog.com.tr/product-category/${params.slug}` },
+    title: name,
+    description,
+    alternates: { canonical: `https://somni.com.tr/product-category/${params.slug}` },
+    openGraph: {
+      title: name,
+      description,
+      images: category?.image ? [{ url: category.image }] : [],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: name,
+      description,
+      images: category?.image ? [category.image] : [],
+    },
   };
 }
 
@@ -56,8 +73,18 @@ export default async function ProductCategoryPage({ params }: Props) {
     };
   }
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Ana Sayfa", item: "https://somni.com.tr" },
+      { "@type": "ListItem", position: 2, name: category.name },
+    ],
+  };
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <Header navItems={navItems} />
       <main>
         <ProductCategoryClient category={category} navItems={navItems} collectionCounts={collectionCounts} />

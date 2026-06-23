@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import type { ProductCategory as Category } from "@/data/products";
 import type { Product } from "@/data/products";
 import type { NavMenuItem, CollectionCount } from "@/data/shopify.server";
@@ -90,10 +91,11 @@ export function ProductCategoryClient({ category, navItems, collectionCounts }: 
               >
                 <div className={`aspect-[4/5] ${sub.image ? "" : "bg-gradient-to-br from-primary/5 to-primary/10"} overflow-hidden`}>
                   {sub.image ? (
-                    <img
+                    <Image
                       src={sub.image}
                       alt={sub.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">

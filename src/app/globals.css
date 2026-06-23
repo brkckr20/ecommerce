@@ -1,11 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
-  font-family: 'Jost', sans-serif;
+  font-family: 'Quicksand', sans-serif;
 }
 
 @keyframes slideDown {
@@ -77,13 +77,13 @@ body {
   }
 }
 
-@keyframes letterPop {
-  0%, 10%, 100% { transform: translateY(0); }
-  5% { transform: translateY(-20px); }
+@keyframes dotBounce {
+  0%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-12px); }
 }
 
-.animate-letter-pop {
-  animation: letterPop 4.5s ease-in-out infinite;
+.animate-dot-bounce {
+  animation: dotBounce 1.4s ease-in-out infinite;
 }
 
 /* Swiper overrides */

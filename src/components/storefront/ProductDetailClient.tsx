@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import type { Product } from "@/data/products";
 import { useCart } from "@/providers/CartProvider";
 import { WishlistButton } from "./WishlistButton";
@@ -139,9 +140,11 @@ export function ProductDetailClient({ product }: Props) {
                           : "border-border hover:border-text-lighter"
                       }`}
                     >
-                      <img
+                      <Image
                         src={img}
                         alt={`${product.name} - ${i + 1}`}
+                        width={56}
+                        height={94}
                         className="w-full h-full object-cover"
                       />
                     </button>
@@ -158,10 +161,11 @@ export function ProductDetailClient({ product }: Props) {
                     >
                       {product.images.map((img, i) => (
                         <div key={i} className="w-full h-full flex-shrink-0">
-                          <img
+                          <Image
                             src={img}
                             alt={`${product.name} - ${i + 1}`}
-                            className="w-full h-full object-cover"
+                            fill
+                            className="object-cover"
                           />
                         </div>
                       ))}

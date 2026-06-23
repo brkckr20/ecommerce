@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCustomer } from "@/providers/ShopifyCustomerProvider";
 import { Header, Footer } from "@/components/storefront";
+import PageMeta from "@/components/storefront/PageMeta";
 import { getDemoOrders } from "@/lib/demo-orders";
 
 function getOrderSlug(orderId: string) {
@@ -29,6 +30,7 @@ export default function OrdersPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
+        <PageMeta title="Siparişlerim" description="Geçmiş siparişlerinizi görüntüleyin ve takip edin." />
         <p className="text-text">Yükleniyor...</p>
       </div>
     );
@@ -41,6 +43,7 @@ export default function OrdersPage() {
 
   return (
     <>
+      <PageMeta title="Siparişlerim" description="Geçmiş siparişlerinizi görüntüleyin ve takip edin." />
       <Header />
       <div className="min-h-screen bg-background-grey py-10 md:py-16">
         <div className="max-w-4xl mx-auto px-4">

@@ -4,7 +4,7 @@ import { Header, Footer } from "@/components/storefront";
 export const metadata: Metadata = {
   title: "Kullanım Koşulları",
   description: "Minimog kullanım koşulları.",
-  alternates: { canonical: "https://minimog.com.tr/kullanim-kosullari" },
+  alternates: { canonical: "https://somni.com.tr/kullanim-kosullari" },
 };
 
 export default function TermsPage() {

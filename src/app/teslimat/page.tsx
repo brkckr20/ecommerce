@@ -4,7 +4,7 @@ import { Header, Footer } from "@/components/storefront";
 export const metadata: Metadata = {
   title: "Teslimat Bilgileri",
   description: "Minimog teslimat ve kargo bilgileri.",
-  alternates: { canonical: "https://minimog.com.tr/teslimat" },
+  alternates: { canonical: "https://somni.com.tr/teslimat" },
 };
 
 export default function DeliveryPage() {
@@ -119,7 +119,7 @@ export default function DeliveryPage() {
                   </h3>
                   <p className="text-text text-sm leading-relaxed">
                     Müşteri hizmetlerimize +90 (212) 123 45 67 numaralı telefondan veya 
-                    hello@domain.com e-posta adresinden ulaşabilirsiniz.
+                    info@somni.com.tr e-posta adresinden ulaşabilirsiniz.
                   </p>
                 </div>
               </div>

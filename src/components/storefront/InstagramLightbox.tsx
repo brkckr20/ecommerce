@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useCallback, useState, useRef } from "react";
+import Image from "next/image";
 
 interface Props {
   images: string[];
@@ -97,9 +98,11 @@ export default function InstagramLightbox({ images, currentIndex, onClose, onNex
                 key={i}
                 className="w-full h-full flex-shrink-0 flex items-center justify-center"
               >
-                <img
+                <Image
                   src={src}
                   alt={`Instagram fotoğrafı ${i + 1}`}
+                  width={600}
+                  height={600}
                   className="max-w-full max-h-full object-contain select-none"
                   draggable={false}
                 />

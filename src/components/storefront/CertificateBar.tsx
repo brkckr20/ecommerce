@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 interface Certificate {
   id: number;
@@ -61,9 +62,11 @@ export function CertificateBar() {
           {certs.map((cert) => (
             <div key={cert.id} className="flex flex-col items-center gap-3">
               <div className="h-20 w-20 md:h-24 md:w-24 shrink-0 overflow-hidden rounded-full border-2 border-[#EEEEEE] bg-white p-1">
-                <img
+                <Image
                   src={cert.image}
                   alt={cert.name}
+                  width={80}
+                  height={80}
                   className="h-full w-full rounded-full object-cover"
                 />
               </div>

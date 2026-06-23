@@ -38,7 +38,7 @@ export default function VariantMatrix({ colors, sizes, stocks, onColorsChange, o
             onChange={(e) => { setColorInput(e.target.value); onColorsChange(e.target.value.split("\n").map((s) => s.trim()).filter(Boolean)); }}
             rows={4}
             placeholder="#F5D6D6"
-            className="w-full rounded-lg border border-[#EEEEEE] px-3 py-2 text-sm outline-none focus:border-[#78726D]"
+            className="w-full rounded-lg border border-[#EEEEEE] px-3 py-2 text-sm outline-none focus:border-primary"
           />
           {parsedColors.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1.5">
@@ -60,7 +60,7 @@ export default function VariantMatrix({ colors, sizes, stocks, onColorsChange, o
             onChange={(e) => { setSizeInput(e.target.value); onSizesChange(e.target.value.split("\n").map((s) => s.trim()).filter(Boolean)); }}
             rows={4}
             placeholder="3 Ay"
-            className="w-full rounded-lg border border-[#EEEEEE] px-3 py-2 text-sm outline-none focus:border-[#78726D]"
+            className="w-full rounded-lg border border-[#EEEEEE] px-3 py-2 text-sm outline-none focus:border-primary"
           />
           {parsedSizes.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1.5">
@@ -102,7 +102,7 @@ export default function VariantMatrix({ colors, sizes, stocks, onColorsChange, o
                           min={0}
                           value={stocks[key] ?? 0}
                           onChange={(e) => onStockChange(key, Number(e.target.value))}
-                          className="w-full rounded border border-[#EEEEEE] px-2 py-1 text-center text-xs outline-none focus:border-[#78726D]"
+                          className="w-full rounded border border-[#EEEEEE] px-2 py-1 text-center text-xs outline-none focus:border-primary"
                         />
                       </td>
                     );

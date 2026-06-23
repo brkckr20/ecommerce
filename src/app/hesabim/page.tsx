@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCustomer } from "@/providers/ShopifyCustomerProvider";
 import { Header, Footer } from "@/components/storefront";
+import PageMeta from "@/components/storefront/PageMeta";
 import { shopifyUpdateCustomer, shopifyCreateAddress, shopifyUpdateAddress, shopifyDeleteAddress } from "@/actions/customer-actions";
 import type { ShopifyAddress } from "@/lib/shopify-types";
 
@@ -23,6 +24,7 @@ export default function ProfilePage() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
+        <PageMeta title="Hesabım" description="Profil bilgilerinizi görüntüleyin ve düzenleyin." />
         <p className="text-text">Yükleniyor...</p>
       </div>
     );
@@ -38,6 +40,7 @@ export default function ProfilePage() {
 
   return (
     <>
+      <PageMeta title="Hesabım" description="Profil bilgilerinizi görüntüleyin ve düzenleyin." />
       <Header />
       <div className="min-h-screen bg-background-grey py-10 md:py-16">
         <div className="max-w-5xl mx-auto px-4">
