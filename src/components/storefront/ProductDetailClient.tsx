@@ -16,7 +16,19 @@ interface Props {
 
 export function ProductDetailClient({ product }: Props) {
   const [activeImage, setActiveImage] = useState(0);
+  const [hoveredImage, setHoveredImage] = useState<number | null>(null);
   const [selectedColor, setSelectedColor] = useState(product.colors[0]);
+  const currentImages = product.images;
+  const displayImage = hoveredImage !== null ? hoveredImage : activeImage;
+
+  useEffect(() => {
+    const colorImgs = product.colorImages[selectedColor];
+    if (colorImgs && colorImgs.length > 0) {
+      const firstIdx = product.images.findIndex(img => colorImgs.includes(img));
+      if (firstIdx !== -1) setActiveImage(firstIdx);
+    }
+  }, [selectedColor, product.colorImages, product.images]);
+
   const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<
@@ -60,7 +72,7 @@ export function ProductDetailClient({ product }: Props) {
         productId: product.id,
         name: product.name,
         price: product.price,
-        image: product.images[activeImage],
+        image: currentImages[activeImage],
         size: selectedSize,
         color: selectedColor,
         quantity,
@@ -68,9 +80,9 @@ export function ProductDetailClient({ product }: Props) {
         variantId,
       },
       fromRect,
-      product.images[activeImage],
+      currentImages[activeImage],
     );
-  }, [product, activeImage, selectedSize, selectedColor, quantity, variantId, addToCartWithFly, addingProductId]);
+  }, [product, activeImage, currentImages, selectedSize, selectedColor, quantity, variantId, addToCartWithFly, addingProductId]);
 
   const isLoading = addingProductId === product.id;
 
@@ -129,13 +141,17 @@ export function ProductDetailClient({ product }: Props) {
           <div className="w-full md:w-1/2">
               <div className="md:sticky md:top-24">
               <div className="woo-single-gallery thumbs-slider-vertical flex flex-col md:flex-row gap-3">
-                <div className="order-1 md:order-none flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-visible shrink-0">
-                  {product.images.map((img, i) => (
+                <div
+                  className="order-1 md:order-none flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-visible shrink-0"
+                  onMouseLeave={() => setHoveredImage(null)}
+                >
+                  {currentImages.map((img, i) => (
                     <button
                       key={i}
                       onClick={() => setActiveImage(i)}
+                      onMouseEnter={() => setHoveredImage(i)}
                       className={`w-14 h-[18px] md:w-[72px] md:h-[94px] flex-shrink-0 bg-background-grey border-2 transition-colors ${
-                        activeImage === i
+                        displayImage === i
                           ? "border-heading"
                           : "border-border hover:border-text-lighter"
                       }`}
@@ -155,12 +171,12 @@ export function ProductDetailClient({ product }: Props) {
                   <div className="relative w-full h-full bg-background-grey group overflow-hidden" ref={imageRef}>
                     <div
                       className="flex h-full transition-transform duration-500 ease-out"
-                      style={{ transform: `translateX(-${activeImage * 100}%)` }}
+                      style={{ transform: `translateX(-${displayImage * 100}%)` }}
                       onMouseMove={handleMouseMove}
                       onMouseLeave={handleMouseLeave}
                     >
-                      {product.images.map((img, i) => (
-                        <div key={i} className="w-full h-full flex-shrink-0">
+                      {currentImages.map((img, i) => (
+                        <div key={i} className="relative w-full h-full flex-shrink-0">
                           <Image
                             src={img}
                             alt={`${product.name} - ${i + 1}`}
@@ -186,8 +202,8 @@ export function ProductDetailClient({ product }: Props) {
                       </svg>
                     </button>
                     <button
-                      onClick={() => setActiveImage(Math.min(product.images.length - 1, activeImage + 1))}
-                      disabled={activeImage === product.images.length - 1}
+                      onClick={() => setActiveImage(Math.min(currentImages.length - 1, activeImage + 1))}
+                      disabled={activeImage === currentImages.length - 1}
                       className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white/80 hover:bg-white text-heading shadow-sm opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-0"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -203,7 +219,7 @@ export function ProductDetailClient({ product }: Props) {
                           width: LENS_SIZE,
                           height: LENS_SIZE,
                           borderRadius: "50%",
-                          backgroundImage: `url(${product.images[activeImage]})`,
+                          backgroundImage: `url(${currentImages[displayImage]})`,
                           backgroundSize: "500%",
                           backgroundRepeat: "no-repeat",
                           backgroundPosition: `${zoom.x}% ${zoom.y}%`,
@@ -366,7 +382,7 @@ export function ProductDetailClient({ product }: Props) {
                     name: product.name,
                     price: product.price,
                     originalPrice: product.originalPrice,
-                    image: product.images[activeImage],
+        image: currentImages[activeImage],
                     slug: product.href.replace("/products/", ""),
                   }}
                   className="w-10 h-10 flex items-center justify-center border border-border text-heading hover:bg-heading hover:text-white transition-all"

@@ -18,6 +18,15 @@ export function QuickViewModal({ product, open, onClose }: Props) {
   const [animIn, setAnimIn] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
   const [selectedColor, setSelectedColor] = useState(product.colors[0]);
+  const currentImages = product.images;
+
+  useEffect(() => {
+    const colorImgs = product.colorImages[selectedColor];
+    if (colorImgs && colorImgs.length > 0) {
+      const firstIdx = product.images.findIndex(img => colorImgs.includes(img));
+      if (firstIdx !== -1) setActiveImage(firstIdx);
+    }
+  }, [selectedColor, product.colorImages, product.images]);
   const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
   const [quantity, setQuantity] = useState(1);
   const btnRef = useRef<HTMLButtonElement>(null);
@@ -65,7 +74,7 @@ export function QuickViewModal({ product, open, onClose }: Props) {
         productId: product.id,
         name: product.name,
         price: product.price,
-        image: product.images[activeImage],
+                  image: currentImages[activeImage],
         size: selectedSize,
         color: selectedColor,
         quantity,
@@ -73,9 +82,9 @@ export function QuickViewModal({ product, open, onClose }: Props) {
         variantId: selectedVariant?.variantId,
       },
       fromRect,
-      product.images[activeImage],
+      currentImages[activeImage],
     );
-  }, [product, activeImage, selectedSize, selectedColor, quantity, selectedVariant, addToCartWithFly, isLoading]);
+  }, [product, activeImage, currentImages, selectedSize, selectedColor, quantity, selectedVariant, addToCartWithFly, isLoading]);
 
   if (!mounted) return null;
 
@@ -102,7 +111,7 @@ export function QuickViewModal({ product, open, onClose }: Props) {
           <div className="w-full md:w-1/2 bg-background-grey md:aspect-[3/4]">
             <div className="aspect-square md:aspect-[3/4] relative">
               <Image
-                src={product.images[activeImage]}
+                src={currentImages[activeImage]}
                 alt={product.name}
                 fill
                 className="object-cover"
@@ -113,9 +122,9 @@ export function QuickViewModal({ product, open, onClose }: Props) {
                 </span>
               )}
             </div>
-            {product.images.length > 1 && (
+            {currentImages.length > 1 && (
               <div className="flex gap-2 p-2 md:p-3 overflow-x-auto">
-                {product.images.map((img, i) => (
+                {currentImages.map((img, i) => (
                   <button
                     key={i}
                     onClick={() => setActiveImage(i)}
@@ -273,7 +282,7 @@ export function QuickViewModal({ product, open, onClose }: Props) {
                   name: product.name,
                   price: product.price,
                   originalPrice: product.originalPrice,
-                  image: product.images[activeImage],
+        image: currentImages[activeImage],
                   slug: product.href.replace("/products/", ""),
                 }}
                 className="w-9 h-9 md:w-9 md:h-9 flex items-center justify-center border border-border text-heading hover:bg-heading hover:text-white transition-all shrink-0"

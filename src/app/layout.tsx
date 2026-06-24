@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   },
   description: "Somni – Bebek & Çocuk Giyim",
   icons: {
-    icon: "/favicon.png",
+    icon: "/favicon.ico",
   },
   openGraph: {
     type: "website",

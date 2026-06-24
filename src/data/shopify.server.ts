@@ -118,6 +118,27 @@ function toProduct(node: ShopifyProduct): Product {
 
   const totalStock = variants.reduce((sum, v) => sum + v.quantityAvailable, 0);
 
+  const colorImagesMap: Record<string, Set<string>> = {};
+  for (const v of variants) {
+    const color = getColorValue(v);
+    if (color && v.image?.url) {
+      if (!colorImagesMap[color]) colorImagesMap[color] = new Set();
+      colorImagesMap[color].add(v.image.url);
+    }
+  }
+  const colorImages: Record<string, string[]> = {};
+  if (Object.keys(colorImagesMap).length > 0) {
+    for (const color of colors) {
+      colorImages[color] = colorImagesMap[color]
+        ? Array.from(colorImagesMap[color])
+        : images;
+    }
+  } else {
+    for (const color of colors) {
+      colorImages[color] = images;
+    }
+  }
+
   const collectionTitles = node.collections.edges.map((e) => e.node.title);
   const categoryTags = (node.tags ?? []).filter(
     (t: string) => !t.startsWith("cat_")
@@ -131,6 +152,7 @@ function toProduct(node: ShopifyProduct): Product {
     image: images[0] || "",
     hoverImage: images[1] || images[0] || "",
     images,
+    colorImages,
     href: `/products/${node.handle}`,
     variants: productVariants,
     colors,

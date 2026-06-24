@@ -14,6 +14,7 @@ export interface Product {
   image: string;
   hoverImage: string;
   images: string[];
+  colorImages: Record<string, string[]>;
   href: string;
   variants: ProductVariant[];
   colors: string[];
