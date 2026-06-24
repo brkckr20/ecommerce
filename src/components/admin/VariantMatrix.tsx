@@ -31,20 +31,19 @@ export default function VariantMatrix({ colors, sizes, stocks, onColorsChange, o
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
         <div>
           <label className="mb-1 block text-sm font-medium text-[#666666]">
-            Renk Kodları <span className="text-[#ABABAB]">(her satıra bir hex kod)</span>
+            Renk İsimleri <span className="text-[#ABABAB]">(her satıra bir renk adı)</span>
           </label>
           <textarea
             value={colorInput}
             onChange={(e) => { setColorInput(e.target.value); onColorsChange(e.target.value.split("\n").map((s) => s.trim()).filter(Boolean)); }}
             rows={4}
-            placeholder="#F5D6D6"
+            placeholder="Kırmızı"
             className="w-full rounded-lg border border-[#EEEEEE] px-3 py-2 text-sm outline-none focus:border-primary"
           />
           {parsedColors.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1.5">
               {parsedColors.map((c) => (
-                <span key={c} className="flex items-center gap-1.5 rounded-md border border-[#EEEEEE] px-2 py-1 text-xs text-[#666666]">
-                  <span className="inline-block h-3 w-3 rounded-full" style={{ backgroundColor: c }} />
+                <span key={c} className="rounded-md border border-[#EEEEEE] px-2 py-1 text-xs text-[#666666]">
                   {c}
                 </span>
               ))}
@@ -88,10 +87,7 @@ export default function VariantMatrix({ colors, sizes, stocks, onColorsChange, o
               {parsedColors.map((color) => (
                 <tr key={color}>
                   <td className="border border-[#EEEEEE] px-3 py-2">
-                    <div className="flex items-center gap-2">
-                      <span className="inline-block h-3 w-3 rounded-full" style={{ backgroundColor: color }} />
-                      <span className="text-xs text-[#666666]">{color}</span>
-                    </div>
+                    <span className="text-xs text-[#666666]">{color}</span>
                   </td>
                   {parsedSizes.map((size) => {
                     const key = cellKey(color, size);

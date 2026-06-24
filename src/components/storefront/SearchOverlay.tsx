@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useMemo } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { Product } from "@/data/products";
 
 interface Props {
@@ -10,6 +11,7 @@ interface Props {
 }
 
 export function SearchOverlay({ open, onClose }: Props) {
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [animIn, setAnimIn] = useState(false);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
@@ -83,7 +85,13 @@ export function SearchOverlay({ open, onClose }: Props) {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Ürün ara..."
-                className="w-full border-b-2 border-heading text-2xl md:text-3xl text-heading py-3 pl-14 pr-4 focus:outline-none placeholder:text-text-lighter/50"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && query.trim()) {
+                    onClose();
+                    router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+                  }
+                }}
+               className="w-full border-b-2 border-heading text-2xl md:text-3xl text-heading py-3 pl-14 pr-4 focus:outline-none placeholder:text-text-lighter/50"
               />
             </div>
             <button
@@ -141,6 +149,15 @@ export function SearchOverlay({ open, onClose }: Props) {
                         </div>
                       </Link>
                     ))}
+                  </div>
+                  <div className="text-center mt-6">
+                    <Link
+                      href={`/search?q=${encodeURIComponent(query)}`}
+                      onClick={onClose}
+                      className="inline-block text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+                    >
+                      Tümünü Gör ({results.length} sonuç)
+                    </Link>
                   </div>
                 </>
               )}

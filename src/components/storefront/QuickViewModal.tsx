@@ -178,7 +178,7 @@ export function QuickViewModal({ product, open, onClose }: Props) {
                 <label className="block text-xs font-medium text-heading mb-1 md:mb-2">
                   Renk: <span className="font-normal text-text">{selectedColor}</span>
                 </label>
-                <div className="flex items-center gap-1.5 md:gap-2">
+                <div className="flex flex-wrap items-center gap-1.5 md:gap-2">
                   {product.colors.map((color) => (
                     <button
                       key={color}
@@ -194,10 +194,14 @@ export function QuickViewModal({ product, open, onClose }: Props) {
                           if (firstAvailable) setSelectedSize(firstAvailable.size);
                         }
                       }}
-                      className={`w-6 h-6 md:w-7 md:h-7 rounded-full border-2 transition-all ${selectedColor === color ? "border-heading scale-110" : "border-border-light-03 hover:border-text-lighter"}`}
-                      style={{ backgroundColor: color }}
-                      title={color}
-                    />
+                      className={`px-2 py-1 text-[11px] md:text-xs border transition-all ${
+                        selectedColor === color
+                          ? "border-heading bg-heading text-white"
+                          : "border-border text-heading hover:border-heading"
+                      }`}
+                    >
+                      {color}
+                    </button>
                   ))}
                 </div>
               </div>
@@ -262,7 +266,7 @@ export function QuickViewModal({ product, open, onClose }: Props) {
                   className="flex-1 bg-heading text-white text-xs md:text-sm font-medium py-2.5 md:py-2.5 px-4 md:px-6 hover:bg-primary transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {variantStock === 0 ? (
-                    <span>Stokta Yok</span>
+                    <span>Gelince Haber Ver</span>
                   ) : isLoading ? (
                     <>
                       <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">

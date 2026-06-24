@@ -143,7 +143,7 @@ export function ProductDetailClient({ product }: Props) {
               <div className="woo-single-gallery thumbs-slider-vertical flex flex-col md:flex-row gap-3">
                 <div
                   className="order-1 md:order-none flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-visible shrink-0"
-                  onMouseLeave={() => setHoveredImage(null)}
+                  onMouseLeave={() => { if (hoveredImage !== null) { setActiveImage(hoveredImage); setHoveredImage(null); } }}
                 >
                   {currentImages.map((img, i) => (
                     <button
@@ -274,7 +274,7 @@ export function ProductDetailClient({ product }: Props) {
                   Renk:{" "}
                   <span className="font-normal text-text">{selectedColor}</span>
                 </label>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2">
                   {product.colors.map((color) => (
                     <button
                       key={color}
@@ -290,14 +290,14 @@ export function ProductDetailClient({ product }: Props) {
                           if (firstAvailable) setSelectedSize(firstAvailable.size);
                         }
                       }}
-                      className={`w-8 h-8 rounded-full border-2 transition-all ${
+                      className={`px-3 py-1.5 text-sm border transition-all ${
                         selectedColor === color
-                          ? "border-heading scale-110"
-                          : "border-border-light-03 hover:border-text-lighter"
+                          ? "border-heading bg-heading text-white"
+                          : "border-border text-heading hover:border-heading"
                       }`}
-                      style={{ backgroundColor: color }}
-                      title={color}
-                    />
+                    >
+                      {color}
+                    </button>
                   ))}
                 </div>
               </div>
@@ -362,7 +362,7 @@ export function ProductDetailClient({ product }: Props) {
                   className="flex-1 bg-heading text-white text-sm font-medium py-2.5 px-6 hover:bg-primary transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {variantStock === 0 ? (
-                    <span>Stokta Yok</span>
+                    <span>Gelince Haber Ver</span>
                   ) : isLoading ? (
                     <>
                       <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">

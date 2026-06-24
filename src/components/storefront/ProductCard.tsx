@@ -144,13 +144,14 @@ export function ProductCard({ product }: Props) {
             </span>
           )}
         </div>
-        <div className="flex items-center gap-1.5">
+        <div className="flex flex-wrap items-center gap-1.5">
           {product.colors.map((color, i) => (
             <span
               key={i}
-              className="w-3.5 h-3.5 md:w-4 md:h-4 rounded-full border border-border-light-03"
-              style={{ backgroundColor: color }}
-            />
+              className="text-[10px] md:text-xs text-text border border-border-light-03 rounded px-1.5 py-0.5"
+            >
+              {color}
+            </span>
           ))}
         </div>
       </div>
