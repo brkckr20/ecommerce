@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { Header, Footer } from "@/components/storefront";
 
 export const metadata: Metadata = {
@@ -24,7 +25,10 @@ export default function AboutPage() {
         <div className="max-w-[1510px] mx-auto px-4 md:px-8 py-12 md:py-20">
           <div className="max-w-4xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-16">
-              <div>
+              <div className="text-center md:text-left">
+                <div className="flex justify-center mb-6">
+                  <Image src="/maskot.png" alt="Maskot" width={160} height={160} className="w-[130px] md:w-[160px] h-auto" />
+                </div>
                 <h2 className="text-2xl md:text-3xl font-bold text-heading mb-6">Hikayemiz</h2>
                 <div className="space-y-4 text-text leading-relaxed">
                   <p>

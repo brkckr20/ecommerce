@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Header, Footer } from "@/components/storefront";
 import { ProductDetailClient } from "@/components/storefront/ProductDetailClient";
-import { getProductBySlug, getAllProductSlugs, getMainMenu } from "@/data/shopify.server";
+import { getProductBySlug, getAllProductSlugs, getAllProducts, getMainMenu } from "@/data/shopify.server";
 
 export const revalidate = 60;
 
@@ -46,9 +46,21 @@ export default async function ProductPage({
     notFound();
   }
 
-  const [navItems] = await Promise.all([
+  const [navItems, allProducts] = await Promise.all([
     getMainMenu(),
+    getAllProducts(),
   ]);
+
+  const relatedProducts = allProducts
+    .filter((p) => p.id !== product.id)
+    .sort((a, b) => {
+      const aCat = a.categories.some((c) => product.categories.includes(c)) ? 1 : 0;
+      const aTag = a.tags.some((t) => product.tags.includes(t)) ? 1 : 0;
+      const bCat = b.categories.some((c) => product.categories.includes(c)) ? 1 : 0;
+      const bTag = b.tags.some((t) => product.tags.includes(t)) ? 1 : 0;
+      return (bCat + bTag) - (aCat + aTag);
+    })
+    .slice(0, 6);
 
   const productJsonLd = {
     "@context": "https://schema.org",
@@ -89,7 +101,7 @@ export default async function ProductPage({
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <Header navItems={navItems} />
       <main>
-        <ProductDetailClient product={product} />
+        <ProductDetailClient product={product} relatedProducts={relatedProducts} />
       </main>
       <Footer />
     </>

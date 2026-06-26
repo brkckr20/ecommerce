@@ -225,7 +225,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                 </div>
               )}
 
-              <CancelReturnForm order={order} />
+              <CancelReturnForm order={order} items={items} />
             </div>
           </div>
         </div>

@@ -4,8 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Header, Footer } from "@/components/storefront";
 import PageMeta from "@/components/storefront/PageMeta";
+import { useCustomer } from "@/providers/ShopifyCustomerProvider";
 
 export default function SiparisTakipPage() {
+  const { customer } = useCustomer();
   const router = useRouter();
   const [orderNo, setOrderNo] = useState("");
   const [email, setEmail] = useState("");
@@ -47,16 +49,18 @@ export default function SiparisTakipPage() {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-heading mb-1.5">E-posta Adresi</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="ornek@email.com"
-                  className="w-full px-4 py-2.5 text-sm border border-border rounded-lg focus:outline-none focus:border-primary transition-colors text-heading placeholder:text-text-lighter"
-                />
-              </div>
+              {!customer && (
+                <div>
+                  <label className="block text-sm font-medium text-heading mb-1.5">E-posta Adresi</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="ornek@email.com"
+                    className="w-full px-4 py-2.5 text-sm border border-border rounded-lg focus:outline-none focus:border-primary transition-colors text-heading placeholder:text-text-lighter"
+                  />
+                </div>
+              )}
 
               {error && (
                 <p className="text-sm text-red-500">{error}</p>

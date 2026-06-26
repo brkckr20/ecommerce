@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Header, Footer } from "@/components/storefront";
+import { getSiteSettingsAction } from "@/actions/settings-actions";
 
 export const metadata: Metadata = {
   title: "Teslimat Bilgileri",
@@ -7,7 +8,10 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://somni.com.tr/teslimat" },
 };
 
-export default function DeliveryPage() {
+export default async function DeliveryPage() {
+  const settings = await getSiteSettingsAction();
+  const limit = settings?.freeShippingLimit ?? 499;
+
   return (
     <>
       <Header />
@@ -32,7 +36,7 @@ export default function DeliveryPage() {
                 </div>
                 <h3 className="text-lg font-semibold text-heading mb-2">Ücretsiz Kargo</h3>
                 <p className="text-sm text-text">
-                  499 TL ve üzeri alışverişlerde kargo ücretsiz.
+                  {limit.toLocaleString("tr-TR")} TL ve üzeri alışverişlerde kargo ücretsiz.
                 </p>
               </div>
               <div className="text-center p-8 bg-[#F9F9F9] rounded-lg">
@@ -82,8 +86,8 @@ export default function DeliveryPage() {
                 <div>
                   <h2 className="text-2xl font-bold text-heading mb-4">Kargo Ücreti</h2>
                   <p className="text-text leading-relaxed mb-3">
-                    499 TL ve üzeri tüm siparişlerde kargo ücretsizdir. 499 TL altındaki 
-                    siparişlerde kargo ücreti 49,99 TL&apos;dir.
+                    {limit.toLocaleString("tr-TR")} TL ve üzeri tüm siparişlerde kargo ücretsizdir. 1.599 TL altındaki 
+                    siparişlerde kargo ücreti 100 TL&apos;dir.
                   </p>
                   <p className="text-text leading-relaxed">
                     Kampanyalı ürünlerde ve özel indirim dönemlerinde kargo ücreti 

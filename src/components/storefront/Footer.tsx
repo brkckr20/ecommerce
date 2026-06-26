@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { FeaturesBar } from "./FeaturesBar";
 import InstagramLightbox from "./InstagramLightbox";
+import { useCustomer } from "@/providers/ShopifyCustomerProvider";
 
 const footerLinks = {
   information: [
@@ -40,6 +41,7 @@ const instagramPosts = [
 ];
 
 export function Footer() {
+  const { customer } = useCustomer();
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const nextImage = () => {
@@ -98,8 +100,8 @@ export function Footer() {
 
       <div className="bg-[#F5F5F5] py-[30px] md:py-[50px]">
         <div className="max-w-[1510px] mx-auto px-4 md:px-6 lg:px-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
-            <div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+            <div className="col-span-2 lg:col-span-1 text-center lg:text-left">
               <h4 className="text-lg font-semibold text-heading mb-4">Şirket</h4>
               <Link href="/">
                 <span className="text-2xl font-bold font-heading text-heading tracking-wider block mb-4">
@@ -116,10 +118,10 @@ export function Footer() {
               </ul>
             </div>
 
-            <div>
+            <div className="col-span-1">
               <h4 className="text-lg font-semibold text-heading mb-4">Bilgiler</h4>
               <ul className="space-y-2">
-                {footerLinks.information.map((link) => (
+                {footerLinks.information.filter((l) => !customer || l.label !== "Giriş Yap").map((link) => (
                   <li key={link.label}>
                     <Link href={link.href} className="text-sm text-text hover:text-primary transition-colors">
                       {link.label}
@@ -129,7 +131,7 @@ export function Footer() {
               </ul>
             </div>
 
-            <div>
+            <div className="col-span-1 text-right lg:text-left">
               <h4 className="text-lg font-semibold text-heading mb-4">Hizmetler</h4>
               <ul className="space-y-2">
                 {footerLinks.services.map((link) => (
@@ -142,7 +144,7 @@ export function Footer() {
               </ul>
             </div>
 
-            <div>
+            <div className="col-span-2 lg:col-span-1 text-center lg:text-left">
               <h4 className="text-lg font-semibold text-heading mb-4">Bülten</h4>
               <p className="text-sm text-text leading-relaxed mb-5">
                 Yeni koleksiyonlardan ve ürün lansmanlarından ilk siz haberdar olun.

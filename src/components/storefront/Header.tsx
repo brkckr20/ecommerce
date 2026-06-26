@@ -43,7 +43,7 @@ export function Header({ navItems: initialItems }: { navItems?: NavMenuItem[] })
 }
 
 function FreeDeliveryBar() {
-  const [limit, setLimit] = useState<number>(499);
+  const [limit, setLimit] = useState<number | null>(null);
   const [bannerText, setBannerText] = useState<string | null>(null);
 
   useEffect(() => {
@@ -54,6 +54,8 @@ function FreeDeliveryBar() {
       }
     });
   }, []);
+
+  if (limit === null) return null;
 
   return (
     <div className="bg-primary text-heading text-sm py-2.5">
@@ -174,7 +176,7 @@ function MainHeader({ isSticky, initialItems }: { isSticky: boolean; initialItem
             </button>
 
             <Link href="/" className="flex-shrink-0">
-              <Image src="/icon.svg" alt="Somni" width={140} height={27} priority className="w-[140px] h-auto" />
+              <Image src="/icon.svg" alt="Somni" width={140} height={27} priority className="w-[100px] md:w-[140px] h-auto" />
             </Link>
           </div>
 

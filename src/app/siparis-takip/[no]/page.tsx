@@ -159,7 +159,7 @@ export default function GuestOrderDetailPage() {
                 </div>
               </div>
 
-              <CancelReturnForm order={order} />
+              <CancelReturnForm order={order} items={items} />
             </div>
           </div>
         </div>

@@ -169,7 +169,7 @@ export function ProductCategoryClient({ category, navItems, collectionCounts }: 
               <div id="page-breadcrumb" className="page-breadcrumb">
                 <div className="container-wide">
                   <div className="page-breadcrumb-wrap">
-                    <ul className="flex items-center gap-2 text-sm text-text">
+                    <ul className="flex items-center gap-1 md:gap-2 text-xs md:text-sm text-text">
                       <li className="level-1 top item-home">
                         <Link href="/" className="hover:text-primary transition-colors">Ana Sayfa</Link>
                       </li>

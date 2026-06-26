@@ -9,12 +9,15 @@ import { WishlistButton } from "./WishlistButton";
 import ProductReviews from "./ProductReviews";
 import { fetchReviewStats } from "@/lib/reviews";
 import StarRating from "./StarRating";
+import { ProductCard } from "./ProductCard";
+import { getSiteSettingsAction } from "@/actions/settings-actions";
 
 interface Props {
   product: Product;
+  relatedProducts?: Product[];
 }
 
-export function ProductDetailClient({ product }: Props) {
+export function ProductDetailClient({ product, relatedProducts = [] }: Props) {
   const [activeImage, setActiveImage] = useState(0);
   const [hoveredImage, setHoveredImage] = useState<number | null>(null);
   const [selectedColor, setSelectedColor] = useState(product.colors[0]);
@@ -37,6 +40,8 @@ export function ProductDetailClient({ product }: Props) {
 
   const [reviewRating, setReviewRating] = useState(product.rating);
   const [reviewCount, setReviewCount] = useState(product.reviewCount);
+  const [freeShippingLimit, setFreeShippingLimit] = useState<number | null>(null);
+  const reviewsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchReviewStats(product.href.replace("/products/", "")).then((s) => {
@@ -44,6 +49,9 @@ export function ProductDetailClient({ product }: Props) {
         setReviewRating(s.rating);
         setReviewCount(s.count);
       }
+    });
+    getSiteSettingsAction().then((s) => {
+      if (s) setFreeShippingLimit(s.freeShippingLimit);
     });
   }, [product.href]);
 
@@ -57,6 +65,21 @@ export function ProductDetailClient({ product }: Props) {
   const addToCartBtnRef = useRef<HTMLButtonElement>(null);
   const { addToCartWithFly, addingProductId } = useCart();
   const LENS_SIZE = 180;
+
+  const touchStartX = useRef(0);
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  }, []);
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) {
+        setActiveImage((prev) => Math.min(currentImages.length - 1, prev + 1));
+      } else {
+        setActiveImage((prev) => Math.max(0, prev - 1));
+      }
+    }
+  }, [currentImages.length]);
 
   const selectedVariant = product.variants.find(
     (v) => v.color === selectedColor && v.size === selectedSize
@@ -111,7 +134,7 @@ export function ProductDetailClient({ product }: Props) {
     <div className="entry-product-page-content">
       <div className="container-wide">
         <div className="page-breadcrumb py-4">
-          <ul className="flex items-center gap-2 text-sm text-text">
+          <ul className="flex items-center gap-1 md:gap-2 text-xs md:text-sm text-text">
             <li>
               <Link href="/" className="hover:text-primary transition-colors">
                 Ana Sayfa
@@ -150,7 +173,7 @@ export function ProductDetailClient({ product }: Props) {
                       key={i}
                       onClick={() => setActiveImage(i)}
                       onMouseEnter={() => setHoveredImage(i)}
-                      className={`w-14 h-[18px] md:w-[72px] md:h-[94px] flex-shrink-0 bg-background-grey border-2 transition-colors ${
+                      className={`w-14 h-[50px] md:w-[72px] md:h-[94px] flex-shrink-0 bg-background-grey border-2 transition-colors ${
                         displayImage === i
                           ? "border-heading"
                           : "border-border hover:border-text-lighter"
@@ -174,6 +197,8 @@ export function ProductDetailClient({ product }: Props) {
                       style={{ transform: `translateX(-${displayImage * 100}%)` }}
                       onMouseMove={handleMouseMove}
                       onMouseLeave={handleMouseLeave}
+                      onTouchStart={handleTouchStart}
+                      onTouchEnd={handleTouchEnd}
                     >
                       {currentImages.map((img, i) => (
                         <div key={i} className="relative w-full h-full flex-shrink-0">
@@ -195,7 +220,7 @@ export function ProductDetailClient({ product }: Props) {
                     <button
                       onClick={() => setActiveImage(Math.max(0, activeImage - 1))}
                       disabled={activeImage === 0}
-                      className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white/80 hover:bg-white text-heading shadow-sm opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-0"
+                      className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white/80 hover:bg-white text-heading shadow-sm border border-[#ececec] opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-0"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -204,7 +229,7 @@ export function ProductDetailClient({ product }: Props) {
                     <button
                       onClick={() => setActiveImage(Math.min(currentImages.length - 1, activeImage + 1))}
                       disabled={activeImage === currentImages.length - 1}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white/80 hover:bg-white text-heading shadow-sm opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-0"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white/80 hover:bg-white text-heading shadow-sm border border-[#ececec] opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-0"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -241,9 +266,15 @@ export function ProductDetailClient({ product }: Props) {
               <div className="flex items-center gap-3 mb-4">
                 <div className="flex items-center gap-1">
                   <StarRating rating={reviewRating} size="sm" />
-                  <span className="text-sm text-text ml-1">
+                  <button
+                    onClick={() => {
+                      setActiveTab("reviews");
+                      reviewsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }}
+                    className="text-sm text-text ml-1 hover:text-primary transition-colors"
+                  >
                     ({reviewCount} yorum)
-                  </span>
+                  </button>
                 </div>
               </div>
 
@@ -401,17 +432,19 @@ export function ProductDetailClient({ product }: Props) {
                     <span className="text-heading font-medium">23 - 30 Mayıs 2026</span>
                   </span>
                 </div>
-                <div className="flex items-center gap-3 text-text">
-                  <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3m9 14V5a2 2 0 00-2-2H6a2 2 0 00-2 2v16l4-2 4 2 4-2 4 2z" />
-                  </svg>
-                  <span>
-                    Ücretsiz Kargo & İade:{" "}
-                    <span className="text-heading font-medium">
-                      200 $ ve üzeri alışverişlerde
+                {freeShippingLimit !== null && (
+                  <div className="flex items-center gap-3 text-text">
+                    <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3m9 14V5a2 2 0 00-2-2H6a2 2 0 00-2 2v16l4-2 4 2 4-2 4 2z" />
+                    </svg>
+                    <span>
+                      Ücretsiz Kargo & İade:{" "}
+                      <span className="text-heading font-medium">
+                        {freeShippingLimit.toLocaleString("tr-TR")} TL ve üzeri alışverişlerde
+                      </span>
                     </span>
-                  </span>
-                </div>
+                  </div>
+                )}
                 <div className="flex items-center gap-3">
                   <span className="text-sm text-text">Stok Kodu:</span>
                   <span className="text-sm text-heading">{product.sku}</span>
@@ -426,7 +459,7 @@ export function ProductDetailClient({ product }: Props) {
           </div>
         </div>
 
-        <div className="border-t border-border mb-16">
+        <div ref={reviewsRef} className="border-t border-border mb-16">
           <div className="flex border-b border-border">
             {[
               { id: "details" as const, label: "Ürün Detayları" },
@@ -501,11 +534,13 @@ export function ProductDetailClient({ product }: Props) {
                 <h4 className="text-base font-medium text-heading mb-4">
                   Kargo Bilgisi
                 </h4>
-                <p className="text-text text-sm leading-relaxed mb-6">
-                  200 $ ve üzeri alışverişlerde ücretsiz kargo. Siparişler 1-2 iş günü
+                {freeShippingLimit !== null && (
+                  <p className="text-text text-sm leading-relaxed mb-6">
+                  {freeShippingLimit.toLocaleString("tr-TR")} TL ve üzeri alışverişlerde ücretsiz kargo. Siparişler 1-2 iş günü
                   içinde işlenir ve 5-7 iş günü içinde teslim edilir. Satın alma
                   tarihinden itibaren 30 gün içinde kolay iade imkanı.
                 </p>
+                )}
                 <h4 className="text-base font-medium text-heading mb-4">
                   İade Politikası
                 </h4>
@@ -526,7 +561,19 @@ export function ProductDetailClient({ product }: Props) {
               </div>
             )}
           </div>
-        </div>
+        {relatedProducts.length > 0 && (
+          <section className="py-16 border-t border-border -mx-4 md:-mx-8 px-4 md:px-8 mt-16">
+            <div className="max-w-[1510px] mx-auto">
+              <h2 className="text-2xl md:text-3xl font-medium text-heading mb-8">Benzer Ürünler</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
+                {relatedProducts.map((p) => (
+                  <ProductCard key={p.id} product={p} />
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+      </div>
       </div>
     </div>
   );

@@ -61,7 +61,7 @@ export function ProductCard({ product }: Props) {
           </span>
         )}
 
-        <div className="product-actions absolute right-3 top-3 z-[3] flex flex-col">
+        <div className="product-actions absolute right-3 top-3 z-[3] hidden md:flex md:flex-col">
           <WishlistButton
             item={{
               id: product.id,
@@ -91,7 +91,7 @@ export function ProductCard({ product }: Props) {
           </button>
         </div>
 
-        <div className="woocommerce_loop_add_to_cart_wrap absolute bottom-3 left-3 right-3 z-[4] md:opacity-0 md:translate-y-[150%] transition-all duration-300 md:group-hover:opacity-100 md:group-hover:translate-y-0">
+        <div className="woocommerce_loop_add_to_cart_wrap absolute bottom-3 left-3 right-3 z-[4] hidden md:block md:opacity-0 md:translate-y-[150%] transition-all duration-300 md:group-hover:opacity-100 md:group-hover:translate-y-0">
           {hasOptions ? (
             <Link
               href={product.href}

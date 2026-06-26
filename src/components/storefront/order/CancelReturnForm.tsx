@@ -13,6 +13,16 @@ const reasons = [
   { value: "diger", label: "Diğer" },
 ];
 
+interface OrderItem {
+  title: string;
+  quantity: number;
+  variant?: {
+    title?: string;
+    price?: { amount: string; currencyCode: string };
+    image?: { url: string };
+  };
+}
+
 interface Props {
   order: {
     id: string;
@@ -21,9 +31,10 @@ interface Props {
     fulfillmentStatus: string;
     financialStatus: string;
   };
+  items?: OrderItem[];
 }
 
-export function CancelReturnForm({ order }: Props) {
+export function CancelReturnForm({ order, items: orderItems = [] }: Props) {
   const [showForm, setShowForm] = useState(false);
   const [type, setType] = useState<"cancel" | "return">("cancel");
   const [reason, setReason] = useState("");
@@ -31,6 +42,7 @@ export function CancelReturnForm({ order }: Props) {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
   const now = Date.now();
   const orderTime = new Date(order.processedAt).getTime();
@@ -117,6 +129,11 @@ export function CancelReturnForm({ order }: Props) {
       return;
     }
 
+    if (type === "return" && selectedItems.length === 0) {
+      setError("Lütfen iade etmek istediğiniz ürünleri seçin.");
+      return;
+    }
+
     setSubmitting(true);
     setError("");
 
@@ -124,7 +141,7 @@ export function CancelReturnForm({ order }: Props) {
       const res = await fetch("/api/orders/cancel", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderId: order.id, type, reason: finalReason }),
+        body: JSON.stringify({ orderId: order.id, type, reason: finalReason, items: selectedItems, totalItems: orderItems.length }),
       });
 
       if (!res.ok) {
@@ -146,6 +163,39 @@ export function CancelReturnForm({ order }: Props) {
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        {type === "return" && orderItems.length > 0 && (
+          <div>
+            <label className="block text-sm font-medium text-heading mb-2">İade Edilecek Ürünler</label>
+            <div className="space-y-2 max-h-48 overflow-y-auto">
+              {orderItems.map((item, i) => (
+                <label
+                  key={i}
+                  className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                    selectedItems.includes(i) ? "border-primary bg-primary/5" : "border-border hover:border-text-lighter"
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedItems.includes(i)}
+                    onChange={() => {
+                      setSelectedItems((prev) =>
+                        prev.includes(i) ? prev.filter((idx) => idx !== i) : [...prev, i]
+                      );
+                    }}
+                    className="w-4 h-4 accent-primary"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-heading truncate">{item.title}</p>
+                    {item.variant?.title && (
+                      <p className="text-xs text-text">{item.variant.title}</p>
+                    )}
+                  </div>
+                  <span className="text-xs text-text whitespace-nowrap">{item.quantity} adet</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
         <div>
           <label className="block text-sm font-medium text-heading mb-1.5">Sebep</label>
           <select
