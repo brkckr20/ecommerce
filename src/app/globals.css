@@ -86,6 +86,16 @@ body {
   animation: dotBounce 1.4s ease-in-out infinite;
 }
 
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.marquee-animate {
+  display: inline-flex;
+  animation: marquee 30s linear infinite;
+}
+
 /* Swiper overrides */
 .swiper-pagination-bullet {
   width: 10px !important;

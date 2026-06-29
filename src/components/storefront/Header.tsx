@@ -57,14 +57,23 @@ function FreeDeliveryBar() {
 
   if (limit === null) return null;
 
+  const text = bannerText
+    ? bannerText.replace("{limit}", limit.toLocaleString("tr-TR"))
+    : `${limit.toLocaleString("tr-TR")} TL ve üzeri alışverişlerde ücretsiz kargo. Fırsatı kaçırmayın!`;
+
+  const segment = (
+    <>
+      <span>{text}</span>
+      <span className="ml-24">{text}</span>
+      <span className="ml-24">{text}</span>
+    </>
+  );
+
   return (
-    <div className="bg-primary text-heading text-sm py-2.5">
-      <div className="container-wide text-center">
-        <span>
-          {bannerText
-            ? bannerText.replace("{limit}", limit.toLocaleString("tr-TR"))
-            : `${limit.toLocaleString("tr-TR")} TL ve üzeri alışverişlerde ücretsiz kargo. Fırsatı kaçırmayın!`}
-        </span>
+    <div className="bg-primary text-heading text-xs sm:text-sm py-2 overflow-hidden">
+      <div className="whitespace-nowrap marquee-animate">
+        {segment}
+        {segment}
       </div>
     </div>
   );

@@ -101,7 +101,7 @@ export default async function ProductPage({
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
       <Header navItems={navItems} />
       <main>
-        <ProductDetailClient product={product} relatedProducts={relatedProducts} />
+        <ProductDetailClient product={product} relatedProducts={relatedProducts} navItems={navItems} />
       </main>
       <Footer />
     </>

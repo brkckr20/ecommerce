@@ -12,12 +12,40 @@ import StarRating from "./StarRating";
 import { ProductCard } from "./ProductCard";
 import { getSiteSettingsAction } from "@/actions/settings-actions";
 
+function slugify(text: string): string {
+  const trMap: Record<string, string> = {
+    ı: "i", ü: "u", ş: "s", ç: "c", ö: "o", ğ: "g",
+    İ: "i", Ü: "u", Ş: "s", Ç: "c", Ö: "o", Ğ: "g",
+  };
+  return text
+    .replace(/[ıüşçöğİÜŞÇÖĞ]/g, (c) => trMap[c] ?? c)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+interface NavItem {
+  name: string;
+  href: string;
+  children: NavItem[];
+  image: string | null;
+}
+
 interface Props {
   product: Product;
   relatedProducts?: Product[];
+  navItems?: NavItem[];
 }
 
-export function ProductDetailClient({ product, relatedProducts = [] }: Props) {
+function findNavItem(href: string, items: NavItem[]): boolean {
+  for (const item of items) {
+    if (item.href === href) return true;
+    if (item.children.length > 0 && findNavItem(href, item.children)) return true;
+  }
+  return false;
+}
+
+export function ProductDetailClient({ product, relatedProducts = [], navItems = [] }: Props) {
   const [activeImage, setActiveImage] = useState(0);
   const [hoveredImage, setHoveredImage] = useState<number | null>(null);
   const [selectedColor, setSelectedColor] = useState(product.colors[0]);
@@ -146,15 +174,27 @@ export function ProductDetailClient({ product, relatedProducts = [] }: Props) {
                 Ürünler
               </Link>
             </li>
-            <li className="text-text-lighter">/</li>
-            <li>
-              <Link
-                href={`/product-category/${product.categories[0]?.toLowerCase().replace(/[^a-z0-9çğıöşü]+/g, "-").replace(/(^-|-$)/g, "") ?? ""}`}
-                className="hover:text-primary transition-colors"
-              >
-                {product.categories[0]}
-              </Link>
-            </li>
+            {product.categories[0] && (() => {
+              const catSlug = slugify(product.categories[0]);
+              const hasPage = findNavItem(`/product-category/${catSlug}`, navItems);
+              return (
+                <>
+                  <li className="text-text-lighter">/</li>
+                  <li>
+                    {hasPage ? (
+                      <Link
+                        href={`/product-category/${catSlug}`}
+                        className="hover:text-primary transition-colors"
+                      >
+                        {product.categories[0]}
+                      </Link>
+                    ) : (
+                      <span className="text-text">{product.categories[0]}</span>
+                    )}
+                  </li>
+                </>
+              );
+            })()}
             <li className="text-text-lighter">/</li>
             <li className="text-heading font-medium">{product.name}</li>
           </ul>
