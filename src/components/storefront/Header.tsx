@@ -61,19 +61,15 @@ function FreeDeliveryBar() {
     ? bannerText.replace("{limit}", limit.toLocaleString("tr-TR"))
     : `${limit.toLocaleString("tr-TR")} TL ve üzeri alışverişlerde ücretsiz kargo. Fırsatı kaçırmayın!`;
 
-  const segment = (
-    <>
-      <span>{text}</span>
-      <span className="ml-24">{text}</span>
-      <span className="ml-24">{text}</span>
-    </>
-  );
-
   return (
     <div className="bg-primary text-heading text-xs sm:text-sm py-2 overflow-hidden">
       <div className="whitespace-nowrap marquee-animate">
-        {segment}
-        {segment}
+        <span>{text}</span>
+        <span className="ml-24">{text}</span>
+        <span className="ml-24">{text}</span>
+        <span className="ml-24">{text}</span>
+        <span className="ml-24">{text}</span>
+        <span className="ml-24">{text}</span>
       </div>
     </div>
   );

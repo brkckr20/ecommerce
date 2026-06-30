@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Header, Footer } from "@/components/storefront";
@@ -10,23 +10,36 @@ import OrderTrackingTimeline from "@/components/storefront/OrderTrackingTimeline
 import { CancelReturnForm } from "@/components/storefront/order/CancelReturnForm";
 import { simulateFulfillments, getFulfillmentStatusLabel, getPaymentStatusLabel } from "@/lib/tracking-simulation";
 import { getDemoOrders } from "@/lib/demo-orders";
+import { useCustomer } from "@/providers/ShopifyCustomerProvider";
 import type { ShopifyOrder } from "@/lib/shopify-types";
 
 function parsePrice(amount: string): number {
   return parseFloat(amount.replace(",", ""));
 }
 
-export default function GuestOrderDetailPage() {
+function GuestOrderDetailPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
+  const { customer } = useCustomer();
   const no = params.no as string;
   const [order, setOrder] = useState<ShopifyOrder | null>(null);
   const [notFound, setNotFound] = useState(false);
+  const [emailError, setEmailError] = useState(false);
 
   useEffect(() => {
     const allOrders = getDemoOrders();
     const found = allOrders.find((o) => o.name.replace("#", "") === no);
 
     if (found) {
+      const email = searchParams.get("email");
+
+      if (!customer) {
+        if (!email || email.toLowerCase() !== (found.email || "").toLowerCase()) {
+          setEmailError(true);
+          return;
+        }
+      }
+
       const enriched = {
         ...found,
         fulfillments: simulateFulfillments(found.fulfillmentStatus, found.processedAt),
@@ -35,7 +48,28 @@ export default function GuestOrderDetailPage() {
     } else {
       setNotFound(true);
     }
-  }, [no]);
+  }, [no, searchParams, customer]);
+
+  if (emailError) {
+    return (
+      <>
+        <PageMeta title="E-posta Doğrulama" description="E-posta adresiniz siparişle eşleşmiyor." />
+        <Header />
+        <div className="min-h-screen bg-background-grey py-10 md:py-16">
+          <div className="max-w-lg mx-auto px-4 text-center">
+            <h1 className="text-2xl font-bold text-heading mb-4">E-posta Doğrulama</h1>
+            <p className="text-text text-sm mb-6">
+              Bu siparişe ait e-posta adresiniz bulunamadı. Lütfen sipariş sorgulama sayfasına dönerek doğru e-posta adresinizi girin.
+            </p>
+            <Link href="/siparis-takip" className="text-primary hover:underline text-sm">
+              Tekrar Sorgula
+            </Link>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
 
   if (notFound) {
     return (
@@ -166,5 +200,13 @@ export default function GuestOrderDetailPage() {
       </div>
       <Footer />
     </>
+  );
+}
+
+export default function GuestOrderDetailPageWrapper() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><p className="text-text">Yükleniyor...</p></div>}>
+      <GuestOrderDetailPage />
+    </Suspense>
   );
 }

@@ -137,6 +137,7 @@ export interface ShopifyFulfillment {
 export interface ShopifyOrder {
   id: string;
   name: string;
+  email?: string | null;
   totalPrice: { amount: string; currencyCode: string };
   subtotalPrice?: { amount: string; currencyCode: string };
   totalShippingPrice?: { amount: string; currencyCode: string };

@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import type { WishlistItem } from "@/types/wishlist";
+import { useToast } from "./ToastProvider";
 
 interface WishlistContextValue {
   items: WishlistItem[];
@@ -23,6 +24,7 @@ const WishlistContext = createContext<WishlistContextValue | null>(null);
 export function WishlistProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<WishlistItem[]>([]);
   const [mounted, setMounted] = useState(false);
+  const { addToast } = useToast();
 
   useEffect(() => {
     setMounted(true);
@@ -57,7 +59,9 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
       }
       return [...prev, item];
     });
-  }, []);
+    const exists = items.find((i) => i.id === item.id);
+    addToast(exists ? "Favorilerden kaldırıldı." : "Favorilere eklendi.", exists ? "info" : "success");
+  }, [addToast, items]);
 
   const removeFromWishlist = useCallback((id: number) => {
     setItems((prev) => prev.filter((i) => i.id !== id));

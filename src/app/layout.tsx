@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { CartProvider, WishlistProvider, ShopifyCustomerProvider } from "@/providers";
+import { CartProvider, WishlistProvider, ShopifyCustomerProvider, ToastProvider } from "@/providers";
 import { CookieConsent, CartDrawer, FlyToCart } from "@/components/storefront";
 import Link from "next/link";
 
@@ -84,16 +84,18 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <ShopifyCustomerProvider>
-          <CartProvider>
-            <WishlistProvider>
-              {children}
-              <FlyToCart />
-              <CartDrawer />
-              <CookieConsent />
-            </WishlistProvider>
-          </CartProvider>
-        </ShopifyCustomerProvider>
+        <ToastProvider>
+          <ShopifyCustomerProvider>
+            <CartProvider>
+              <WishlistProvider>
+                {children}
+                <FlyToCart />
+                <CartDrawer />
+                <CookieConsent />
+              </WishlistProvider>
+            </CartProvider>
+          </ShopifyCustomerProvider>
+        </ToastProvider>
       </body>
     </html>
   );

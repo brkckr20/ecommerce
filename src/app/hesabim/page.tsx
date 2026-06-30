@@ -12,7 +12,7 @@ import type { ShopifyAddress } from "@/lib/shopify-types";
 type Tab = "profil" | "adresler" | "siparisler";
 
 export default function ProfilePage() {
-  const { customer, accessToken, isLoading } = useCustomer();
+  const { customer, isLoading } = useCustomer();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<Tab>("profil");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -30,7 +30,7 @@ export default function ProfilePage() {
     );
   }
 
-  if (!customer || !accessToken) return null;
+  if (!customer && !isLoading) return null;
 
   const tabs: { id: Tab; label: string }[] = [
     { id: "profil", label: "Profil Bilgileri" },
@@ -93,8 +93,8 @@ export default function ProfilePage() {
           </div>
 
           <div className="flex-1 min-w-0">
-            {activeTab === "profil" && <ProfileInfo customer={customer} accessToken={accessToken} />}
-            {activeTab === "adresler" && <AddressList customer={customer} accessToken={accessToken} />}
+            {activeTab === "profil" && <ProfileInfo customer={customer} />}
+            {activeTab === "adresler" && <AddressList customer={customer} />}
             {activeTab === "siparisler" && <OrdersSection customer={customer} />}
           </div>
         </div>
@@ -105,7 +105,7 @@ export default function ProfilePage() {
   );
 }
 
-function ProfileInfo({ customer, accessToken }: { customer: any; accessToken: string }) {
+function ProfileInfo({ customer }: { customer: any }) {
   const [firstName, setFirstName] = useState(customer.firstName || "");
   const [lastName, setLastName] = useState(customer.lastName || "");
   const [phone, setPhone] = useState(customer.phone || "");
@@ -116,7 +116,7 @@ function ProfileInfo({ customer, accessToken }: { customer: any; accessToken: st
     e.preventDefault();
     setMessage(null);
     setLoading(true);
-    const result = await shopifyUpdateCustomer(accessToken, { firstName, lastName, phone });
+    const result = await shopifyUpdateCustomer({ firstName, lastName, phone });
     setLoading(false);
     if (result.error) {
       setMessage({ type: "error", text: result.error });
@@ -184,7 +184,7 @@ function ProfileInfo({ customer, accessToken }: { customer: any; accessToken: st
   );
 }
 
-function AddressList({ customer, accessToken }: { customer: any; accessToken: string }) {
+function AddressList({ customer }: { customer: any }) {
   const [addresses, setAddresses] = useState<ShopifyAddress[]>(customer.addresses?.edges?.map((e: any) => e.node) || []);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -207,8 +207,8 @@ function AddressList({ customer, accessToken }: { customer: any; accessToken: st
     setSaving(true);
 
     const result = editingId
-      ? await shopifyUpdateAddress(accessToken, editingId, formData)
-      : await shopifyCreateAddress(accessToken, formData);
+      ? await shopifyUpdateAddress(editingId, formData)
+      : await shopifyCreateAddress(formData);
 
     setSaving(false);
 
@@ -232,7 +232,7 @@ function AddressList({ customer, accessToken }: { customer: any; accessToken: st
   }
 
   async function handleDelete(id: string) {
-    const result = await shopifyDeleteAddress(accessToken, id);
+    const result = await shopifyDeleteAddress(id);
     if (result.error) {
       setMessage({ type: "error", text: result.error });
     } else {

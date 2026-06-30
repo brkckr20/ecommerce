@@ -11,6 +11,7 @@ import {
 } from "react";
 import type { CartItem } from "@/types/cart";
 import { useCustomer } from "./ShopifyCustomerProvider";
+import { useToast } from "./ToastProvider";
 
 type FlyPhase = "idle" | "start" | "animate";
 
@@ -67,6 +68,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const cartIconRef = useRef<HTMLButtonElement | null>(null);
   const pendingItemRef = useRef<(Omit<CartItem, "id"> & { productId: number; variantId?: string }) | null>(null);
   const { customer } = useCustomer();
+  const { addToast } = useToast();
 
   const isFirstOrderEligible = !!(customer && (customer.numberOfOrders ?? 0) === 0);
 
@@ -154,8 +156,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const removeFromCart = useCallback(
     (id: string) => {
       setItems((prev) => prev.filter((i) => i.id !== id));
+      addToast("Ürün sepetten kaldırıldı.", "info");
     },
-    []
+    [addToast]
   );
 
   const updateQuantity = useCallback(
@@ -184,7 +187,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setAddingProductId(null);
     setIsDrawerOpen(true);
     setFly({ phase: "idle", fromRect: null, toRect: null, imageUrl: "" });
-  }, []);
+    addToast("Ürün sepete eklendi.", "success");
+  }, [addToast]);
 
   const addToCartWithFly = useCallback(
     (

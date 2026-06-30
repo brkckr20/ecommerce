@@ -6,6 +6,7 @@ const demoOrders: ShopifyOrder[] = [
   {
     id: "gid://shopify/Order/demo-1001",
     name: "#1001",
+    email: "ayse.yilmaz@example.com",
     totalPrice: { amount: "899.00", currencyCode: "TRY" },
     subtotalPrice: { amount: "749.00", currencyCode: "TRY" },
     totalShippingPrice: { amount: "49.90", currencyCode: "TRY" },
@@ -57,6 +58,7 @@ const demoOrders: ShopifyOrder[] = [
   {
     id: "gid://shopify/Order/demo-1002",
     name: "#1002",
+    email: "mehmet.demir@example.com",
     totalPrice: { amount: "1299.00", currencyCode: "TRY" },
     subtotalPrice: { amount: "1199.00", currencyCode: "TRY" },
     totalShippingPrice: { amount: "0.00", currencyCode: "TRY" },
@@ -120,6 +122,7 @@ const demoOrders: ShopifyOrder[] = [
   {
     id: "gid://shopify/Order/demo-1003",
     name: "#1003",
+    email: "zeynep.kara@example.com",
     totalPrice: { amount: "549.90", currencyCode: "TRY" },
     subtotalPrice: { amount: "459.90", currencyCode: "TRY" },
     totalShippingPrice: { amount: "49.90", currencyCode: "TRY" },

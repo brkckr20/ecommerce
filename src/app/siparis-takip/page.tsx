@@ -19,8 +19,17 @@ export default function SiparisTakipPage() {
       setError("Lütfen sipariş numaranızı girin.");
       return;
     }
+    if (!customer && !email.trim()) {
+      setError("Lütfen e-posta adresinizi girin.");
+      return;
+    }
     setError("");
-    router.push(`/siparis-takip/${orderNo.trim().replace("#", "")}`);
+    const params = new URLSearchParams();
+    if (!customer && email.trim()) {
+      params.set("email", email.trim());
+    }
+    const qs = params.toString();
+    router.push(`/siparis-takip/${orderNo.trim().replace("#", "")}${qs ? `?${qs}` : ""}`);
   };
 
   return (

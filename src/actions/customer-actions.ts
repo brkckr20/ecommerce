@@ -1,5 +1,6 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { shopifyFetch } from "@/lib/shopify";
 import {
   CUSTOMER_ACCESS_TOKEN_CREATE_MUTATION,
@@ -18,6 +19,26 @@ import type {
   ShopifyCustomer,
 } from "@/lib/shopify-types";
 
+const COOKIE_NAME = "shopify_customer_token";
+
+function getTokenFromCookies(): string | undefined {
+  return cookies().get(COOKIE_NAME)?.value;
+}
+
+function setTokenCookie(token: string) {
+  cookies().set(COOKIE_NAME, token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 60 * 60 * 24 * 30,
+    path: "/",
+  });
+}
+
+function deleteTokenCookie() {
+  cookies().delete(COOKIE_NAME);
+}
+
 export async function shopifyLogin(email: string, password: string) {
   const data = await shopifyFetch<CustomerAccessTokenCreateResponse>(
     CUSTOMER_ACCESS_TOKEN_CREATE_MUTATION,
@@ -32,15 +53,13 @@ export async function shopifyLogin(email: string, password: string) {
   const token = data.customerAccessTokenCreate.customerAccessToken;
   if (!token) return { error: "Giriş başarısız." };
 
+  setTokenCookie(token.accessToken);
+
   const customerData = await shopifyFetch<CustomerQueryResponse>(CUSTOMER_QUERY, {
     customerAccessToken: token.accessToken,
   });
 
-  return {
-    accessToken: token.accessToken,
-    expiresAt: token.expiresAt,
-    customer: customerData.customer,
-  };
+  return { customer: customerData.customer };
 }
 
 export async function shopifyRegister(
@@ -72,29 +91,38 @@ export async function shopifyRegister(
   return { success: true };
 }
 
-export async function shopifyLogout(accessToken: string) {
-  await shopifyFetch(CUSTOMER_ACCESS_TOKEN_DELETE_MUTATION, {
-    customerAccessToken: accessToken,
-  });
+export async function shopifyLogout() {
+  const token = getTokenFromCookies();
+  if (token) {
+    await shopifyFetch(CUSTOMER_ACCESS_TOKEN_DELETE_MUTATION, {
+      customerAccessToken: token,
+    }).catch(() => {});
+  }
+  deleteTokenCookie();
 }
 
-export async function shopifyGetCustomer(accessToken: string) {
+export async function getAuthCustomer() {
+  const token = getTokenFromCookies();
+  if (!token) return null;
   try {
     const data = await shopifyFetch<CustomerQueryResponse>(CUSTOMER_QUERY, {
-      customerAccessToken: accessToken,
+      customerAccessToken: token,
     });
     return data.customer;
   } catch {
+    deleteTokenCookie();
     return null;
   }
 }
 
 export async function shopifyUpdateCustomer(
-  accessToken: string,
   customer: { firstName?: string; lastName?: string; phone?: string }
 ) {
+  const token = getTokenFromCookies();
+  if (!token) return { error: "Oturum bulunamadı." };
+
   const data = await shopifyFetch<any>(CUSTOMER_UPDATE_MUTATION, {
-    customerAccessToken: accessToken,
+    customerAccessToken: token,
     customer,
   });
 
@@ -107,7 +135,6 @@ export async function shopifyUpdateCustomer(
 }
 
 export async function shopifyCreateAddress(
-  accessToken: string,
   address: {
     address1: string;
     address2?: string;
@@ -120,8 +147,11 @@ export async function shopifyCreateAddress(
     lastName?: string;
   }
 ) {
+  const token = getTokenFromCookies();
+  if (!token) return { error: "Oturum bulunamadı." };
+
   const data = await shopifyFetch<any>(CUSTOMER_ADDRESS_CREATE_MUTATION, {
-    customerAccessToken: accessToken,
+    customerAccessToken: token,
     address,
   });
 
@@ -134,7 +164,6 @@ export async function shopifyCreateAddress(
 }
 
 export async function shopifyUpdateAddress(
-  accessToken: string,
   addressId: string,
   address: {
     address1?: string;
@@ -148,8 +177,11 @@ export async function shopifyUpdateAddress(
     lastName?: string;
   }
 ) {
+  const token = getTokenFromCookies();
+  if (!token) return { error: "Oturum bulunamadı." };
+
   const data = await shopifyFetch<any>(CUSTOMER_ADDRESS_UPDATE_MUTATION, {
-    customerAccessToken: accessToken,
+    customerAccessToken: token,
     addressId,
     address,
   });
@@ -162,9 +194,12 @@ export async function shopifyUpdateAddress(
   return { success: true };
 }
 
-export async function shopifyDeleteAddress(accessToken: string, addressId: string) {
+export async function shopifyDeleteAddress(addressId: string) {
+  const token = getTokenFromCookies();
+  if (!token) return { error: "Oturum bulunamadı." };
+
   const data = await shopifyFetch<any>(CUSTOMER_ADDRESS_DELETE_MUTATION, {
-    customerAccessToken: accessToken,
+    customerAccessToken: token,
     id: addressId,
   });
 
